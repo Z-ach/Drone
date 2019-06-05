@@ -1,1 +1,7 @@
-Source code for drone project. Will update this later with goals and current progress.
+Source code for drone project.
+
+Todo:
+- [ ] Implement control module
+- [ ] Implement command module
+- [ ] Implement network module
+
