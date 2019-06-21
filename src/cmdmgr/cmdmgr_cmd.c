@@ -1,16 +1,7 @@
 #include "cmdmgr_cmd.h"
 
-static CommandNode *cmd_node_head;
-static uint8_t cmd_buf_size;
-
-OperationStatus init_cmd_buf(void){
-	OperationStatus status = STATUS_OK;
-	cmd_buf_size = 0;
-	return status;
-}
-
 OperationStatus handoff_recv_cmd(uint32_t cmd){
-	
+
 	//All fields that will be extracted
 	uint8_t counter;
 	uint8_t mode;
@@ -65,71 +56,3 @@ OperationStatus handoff_recv_cmd(uint32_t cmd){
 
 	return (stat == CMD_BUFFER_OK) ? STATUS_OK : STATUS_FAIL;
 }
-
-OperationStatus crc8(uint32_t cmd){
-	uint8_t data[4];
-	OperationStatus crc_status = STATUS_OK; 
-	OperationStatus segment_success;
-
-	segment_success = segment_bytes(data, cmd);
-	if(segment_success != STATUS_OK){
-		printf("Unable to segment command data. Invalid?\n");
-		crc_status = STATUS_FAIL;
-	}else{
-		for(int i = 0; i < 4; i++){
-        	;//crc = crc8x_table[crc ^ *data++];		
-        }
-	}
-	return crc_status;
-}
-
-OperationStatus segment_bytes(uint8_t *buffer, uint32_t cmd){
-	OperationStatus segment_status = STATUS_OK;
-	for(int i = 0; i < 4; i++){
-		buffer[i] = cmd & 0xFF;
-		cmd >>= 8;
-	}
-	return segment_status;
-}
-
-BufferStatus insert_into_cmd_buf(Command cmd){
-	//Ensure there is room in the buffer
-	if(cmd_buf_size >= CMD_BUF_MAX)
-		return CMD_BUFFER_FULL;
-	
-	CommandNode *new_cmd = malloc(sizeof(CommandNode));
-	new_cmd->command = cmd;
-	new_cmd->next = NULL;
-
-	//Check if buffer is empty
-	if(cmd_buf_size == 0){
-		cmd_node_head = new_cmd;
-	}else{
-		CommandNode *iter = cmd_node_head;
-		while(iter->next != NULL){
-			iter = iter->next;
-		}
-		iter->next = new_cmd;
-	}
-	cmd_buf_size++;
-	return CMD_BUFFER_OK;
-}
-
-BufferStatus fetch_next_cmd(Command *cmd){
-	if(cmd_buf_size == 0) return CMD_BUFFER_EMPTY;
-	
-	//fetch command at head
-	*cmd = cmd_node_head->command; 
-	
-	//store next so head can be freed
-	CommandNode *next = cmd_node_head->next;
-	free(cmd_node_head);
-
-	//move head to next
-	cmd_node_head = next;
-
-	printf("count:\t%d\nmode:\t%d\n", cmd->counter, cmd->mode);
-	cmd_buf_size--;
-	return CMD_BUFFER_OK;
-}
-
