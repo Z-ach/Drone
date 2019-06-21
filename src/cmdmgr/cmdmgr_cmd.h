@@ -1,9 +1,15 @@
-#pragma once
+#ifndef CMDMGR_CMD_
+#define CMDMGR_CMD_
+#define getname(var) #var
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
-#include "../ctrlmgr/ctrlmgr_ctrl.h"
+#ifndef CTRLMGR_CTRL_
+#include "../ctrlmgr/ctrlmgr_stat.h"
+#endif
 
 /*	Command Modes	*/
 typedef enum {
@@ -60,11 +66,11 @@ typedef struct {
 	CommandStatus status;
 } Command;
 
-typedef struct CommandBuffer{
-	struct CommandBuffer *next;
+typedef struct CommandNode{
+	struct CommandNode *next;
 	Command command;
 
-} CommandBuffer;
+} CommandNode;
 
 typedef enum {
 	CMD_BUFFER_OK		= 0x00,
@@ -99,6 +105,10 @@ typedef enum {
 	PARAM_MNTN_MASK	= 0x03
 } ParamMasks;
 
+typedef enum {
+	CMD_BUF_MAX = 10
+} Constants;
+
 static unsigned char const crc8x_table[] = {
     0x00, 0x31, 0x62, 0x53, 0xc4, 0xf5, 0xa6, 0x97, 0xb9, 0x88, 0xdb, 0xea, 0x7d,
     0x4c, 0x1f, 0x2e, 0x43, 0x72, 0x21, 0x10, 0x87, 0xb6, 0xe5, 0xd4, 0xfa, 0xcb,
@@ -120,3 +130,5 @@ static unsigned char const crc8x_table[] = {
     0x48, 0x1b, 0x2a, 0xc1, 0xf0, 0xa3, 0x92, 0x05, 0x34, 0x67, 0x56, 0x78, 0x49,
     0x1a, 0x2b, 0xbc, 0x8d, 0xde, 0xef, 0x82, 0xb3, 0xe0, 0xd1, 0x46, 0x77, 0x24,
     0x15, 0x3b, 0x0a, 0x59, 0x68, 0xff, 0xce, 0x9d, 0xac};
+
+#endif
