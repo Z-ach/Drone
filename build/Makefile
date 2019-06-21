@@ -48,7 +48,7 @@ RM = /usr/local/Cellar/cmake/3.14.5/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/Zach/Documents/Drone
+CMAKE_SOURCE_DIR = /Users/Zach/Documents/Drone/src
 
 # The top-level build directory on which CMake was run.
 CMAKE_BINARY_DIR = /Users/Zach/Documents/Drone/build
