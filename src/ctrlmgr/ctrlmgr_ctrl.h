@@ -1,34 +1,22 @@
-#ifndef CTRLMGR_CTRL_
-#define CTRLMGR_CTRL_
+#ifndef CTRLMGR_CTRL_H
+#define CTRLMGR_CTRL_H
 
 #include <stdio.h>
 #include <pthread.h>
 
 #include "ctrlmgr_stat.h"
-
-#ifndef CMDMGR_CMD_
-#include "../cmdmgr/cmdmgr_cmd.h"
-#endif
-
-
-/*	State Information		*/
-typedef struct State{
-	Command *current_cmd;
-} State;
-
-typedef struct SharedStatus{
-	State *state;
-	pthread_mutex_t *lock;
-} SharedStatus;
+#include "ctrlmgr_state.h"
+#include <cmdmgr/cmdmgr_cmd.h>
+#include <cmdmgr/cmdmgr_handler.h>
+#include <cmdmgr/cmdmgr_buffer.h>
 
 
 /*	Functions				*/
 //Checks to see if current command has changed
 OperationStatus check_state_cmd();
+void init();
+void start();
 
-
-/*	Assertion-Like Helpers	*/
-//OperationStatus assert_equalilty(void *var1, void *var2, Equality equality);
 
 
 #endif

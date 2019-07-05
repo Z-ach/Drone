@@ -1,3 +1,5 @@
+#include "cmdmgr_crc.h"
+
 OperationStatus crc8(uint32_t cmd){
 	uint8_t data[4];
 	OperationStatus crc_status = STATUS_OK;

@@ -1,67 +1,16 @@
+#ifndef CMDMGR_CMD_H
+#define CMDMGR_CMD_H
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 
-#include "../ctrlmgr/ctrlmgr_stat.h"
+#include <ctrlmgr/ctrlmgr_stat.h>
 
-#ifndef CMDMGR_CMD_
-#define CMDMGR_CMD_
-
-/*	Command Modes	*/
-typedef enum {
-	TAKE_OFF	=	0x00,
-	LAND		=	0x01,
-	HOVER		=	0x02,
-	PATROL		=	0x03
-} CommandMode;
-
-/*	Parameters		*/
-typedef enum {
-	LOCATION_STAY	=	0x00
-} Location;
-
-typedef enum {
-	EMERGENCY_OFF	= 0x00,
-	EMERGENCY_ON	= 0x02
-} Emergency;
-
-
-/*	Data Types		*/
-typedef struct{
-	struct TakeOff{
-		uint8_t altitude;
-	} TakeOff;
-
-	struct Land{
-		uint8_t location;
-		uint8_t emergency;
-	} Land;
-
-	struct Hover{
-		uint8_t location;
-		uint8_t maintain;
-	} Hover;
-
-	struct Patrol{
-		uint8_t location_a;
-		uint8_t location_b;
-	} Patrol;
-} Parameters;
-
-typedef enum {
-	STATUS_WAITING		= 0x00,
-	STATUS_EXECUTING	= 0x01,
-	STATUS_FINISHED		= 0x02,
-	STATUS_FAILED		= 0xFF
-} CommandStatus;
-
-typedef struct {
-	uint8_t counter;
-	CommandMode mode;
-	Parameters params;
-	CommandStatus status;
-} Command;
+#include "cmdmgr_pub.h"
+#include "cmdmgr_crc.h"
 
 
 /*	Functions	*/

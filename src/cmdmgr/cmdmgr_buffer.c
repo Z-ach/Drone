@@ -1,5 +1,15 @@
 #include "cmdmgr_buffer.h"
 
+typedef struct CommandNode{
+	struct CommandNode *next;
+	Command command;
+
+} CommandNode;
+
+typedef enum {
+	CMD_BUF_MAX = 10
+} Constants;
+
 static CommandNode *cmd_node_head;
 static uint8_t cmd_buf_size;
 
