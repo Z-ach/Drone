@@ -1,6 +1,9 @@
 cmake_minimum_required (VERSION 3.5)
 project (Drone)
 
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+
 #set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 set (LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
 
@@ -21,3 +24,6 @@ add_executable(Drone
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_crc.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_pub.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_state.h)
+
+
+target_link_libraries(Drone Threads)

@@ -10,7 +10,7 @@ void init(){
 void start(){
 	pthread_t cmd_thread;
 	
-	pthread_create(&cmd_thread, NULL, &cmd_handler, NULL);
+	//pthread_create(&cmd_thread, NULL, &cmd_handler, NULL);
 }
 
 int main(int argc, char *argv[]){
