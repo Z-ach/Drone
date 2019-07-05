@@ -1,4 +1,5 @@
 bin/
+build/Makefile
 build/CMakeCache.txt
 build/CMakeFiles/
 build/cmake_install.cmake

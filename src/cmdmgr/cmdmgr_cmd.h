@@ -11,6 +11,7 @@
 
 #include "cmdmgr_pub.h"
 #include "cmdmgr_crc.h"
+#include "cmdmgr_buffer.h"
 
 
 /*	Functions	*/

@@ -39,6 +39,7 @@ BufferStatus insert_into_cmd_buf(Command cmd){
 		iter->next = new_cmd;
 	}
 	cmd_buf_size++;
+	printf("Insert Success\n");
 	return CMD_BUFFER_OK;
 }
 

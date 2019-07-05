@@ -52,7 +52,11 @@ OperationStatus handoff_recv_cmd(uint32_t cmd){
 
 	printf("Attempting to insert into buffer\n");
 	BufferStatus stat = insert_into_cmd_buf(actual_cmd);
-	printf("Success!\n");
+
+	if(stat == CMD_BUFFER_OK)
+		printf("Success!\n");
+	else
+		printf("BUFFER FULL\n");
 
 	return (stat == CMD_BUFFER_OK) ? STATUS_OK : STATUS_FAIL;
 }
