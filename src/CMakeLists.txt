@@ -1,11 +1,14 @@
 cmake_minimum_required (VERSION 3.5)
+
+set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
+
 project (Drone)
 
 #set(THREADS_PREFER_PTHREAD_FLAG ON)
 #find_package(Threads REQUIRED)
 
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
-set (LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
+#set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
+#set (LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 # The following folder will be included
 include_directories("${PROJECT_SOURCE_DIR}")
