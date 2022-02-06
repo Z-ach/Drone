@@ -48,10 +48,10 @@ RM = /usr/local/Cellar/cmake/3.14.5/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/Zach/Documents/Drone/src
+CMAKE_SOURCE_DIR = /Users/Zach/Documents/Projects/Drone/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/Zach/Documents/Drone/build
+CMAKE_BINARY_DIR = /Users/Zach/Documents/Projects/Drone/build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Zach/Documents/Drone/build/CMakeFiles /Users/Zach/Documents/Drone/build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Zach/Documents/Projects/Drone/build/CMakeFiles /Users/Zach/Documents/Projects/Drone/build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Zach/Documents/Drone/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/Zach/Documents/Projects/Drone/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -123,6 +123,33 @@ Drone/fast:
 	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/build
 .PHONY : Drone/fast
 
+cmdmgr/cmdmgr_buffer.o: cmdmgr/cmdmgr_buffer.c.o
+
+.PHONY : cmdmgr/cmdmgr_buffer.o
+
+# target to build an object file
+cmdmgr/cmdmgr_buffer.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_buffer.c.o
+.PHONY : cmdmgr/cmdmgr_buffer.c.o
+
+cmdmgr/cmdmgr_buffer.i: cmdmgr/cmdmgr_buffer.c.i
+
+.PHONY : cmdmgr/cmdmgr_buffer.i
+
+# target to preprocess a source file
+cmdmgr/cmdmgr_buffer.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_buffer.c.i
+.PHONY : cmdmgr/cmdmgr_buffer.c.i
+
+cmdmgr/cmdmgr_buffer.s: cmdmgr/cmdmgr_buffer.c.s
+
+.PHONY : cmdmgr/cmdmgr_buffer.s
+
+# target to generate assembly for a file
+cmdmgr/cmdmgr_buffer.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_buffer.c.s
+.PHONY : cmdmgr/cmdmgr_buffer.c.s
+
 cmdmgr/cmdmgr_cmd.o: cmdmgr/cmdmgr_cmd.c.o
 
 .PHONY : cmdmgr/cmdmgr_cmd.o
@@ -149,6 +176,60 @@ cmdmgr/cmdmgr_cmd.s: cmdmgr/cmdmgr_cmd.c.s
 cmdmgr/cmdmgr_cmd.c.s:
 	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_cmd.c.s
 .PHONY : cmdmgr/cmdmgr_cmd.c.s
+
+cmdmgr/cmdmgr_crc.o: cmdmgr/cmdmgr_crc.c.o
+
+.PHONY : cmdmgr/cmdmgr_crc.o
+
+# target to build an object file
+cmdmgr/cmdmgr_crc.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_crc.c.o
+.PHONY : cmdmgr/cmdmgr_crc.c.o
+
+cmdmgr/cmdmgr_crc.i: cmdmgr/cmdmgr_crc.c.i
+
+.PHONY : cmdmgr/cmdmgr_crc.i
+
+# target to preprocess a source file
+cmdmgr/cmdmgr_crc.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_crc.c.i
+.PHONY : cmdmgr/cmdmgr_crc.c.i
+
+cmdmgr/cmdmgr_crc.s: cmdmgr/cmdmgr_crc.c.s
+
+.PHONY : cmdmgr/cmdmgr_crc.s
+
+# target to generate assembly for a file
+cmdmgr/cmdmgr_crc.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_crc.c.s
+.PHONY : cmdmgr/cmdmgr_crc.c.s
+
+cmdmgr/cmdmgr_handler.o: cmdmgr/cmdmgr_handler.c.o
+
+.PHONY : cmdmgr/cmdmgr_handler.o
+
+# target to build an object file
+cmdmgr/cmdmgr_handler.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_handler.c.o
+.PHONY : cmdmgr/cmdmgr_handler.c.o
+
+cmdmgr/cmdmgr_handler.i: cmdmgr/cmdmgr_handler.c.i
+
+.PHONY : cmdmgr/cmdmgr_handler.i
+
+# target to preprocess a source file
+cmdmgr/cmdmgr_handler.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_handler.c.i
+.PHONY : cmdmgr/cmdmgr_handler.c.i
+
+cmdmgr/cmdmgr_handler.s: cmdmgr/cmdmgr_handler.c.s
+
+.PHONY : cmdmgr/cmdmgr_handler.s
+
+# target to generate assembly for a file
+cmdmgr/cmdmgr_handler.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/cmdmgr/cmdmgr_handler.c.s
+.PHONY : cmdmgr/cmdmgr_handler.c.s
 
 ctrlmgr/ctrlmgr_ctrl.o: ctrlmgr/ctrlmgr_ctrl.c.o
 
@@ -177,6 +258,33 @@ ctrlmgr/ctrlmgr_ctrl.c.s:
 	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_ctrl.c.s
 .PHONY : ctrlmgr/ctrlmgr_ctrl.c.s
 
+ctrlmgr/ctrlmgr_pid.o: ctrlmgr/ctrlmgr_pid.c.o
+
+.PHONY : ctrlmgr/ctrlmgr_pid.o
+
+# target to build an object file
+ctrlmgr/ctrlmgr_pid.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_pid.c.o
+.PHONY : ctrlmgr/ctrlmgr_pid.c.o
+
+ctrlmgr/ctrlmgr_pid.i: ctrlmgr/ctrlmgr_pid.c.i
+
+.PHONY : ctrlmgr/ctrlmgr_pid.i
+
+# target to preprocess a source file
+ctrlmgr/ctrlmgr_pid.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_pid.c.i
+.PHONY : ctrlmgr/ctrlmgr_pid.c.i
+
+ctrlmgr/ctrlmgr_pid.s: ctrlmgr/ctrlmgr_pid.c.s
+
+.PHONY : ctrlmgr/ctrlmgr_pid.s
+
+# target to generate assembly for a file
+ctrlmgr/ctrlmgr_pid.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_pid.c.s
+.PHONY : ctrlmgr/ctrlmgr_pid.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -186,12 +294,24 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... Drone"
+	@echo "... cmdmgr/cmdmgr_buffer.o"
+	@echo "... cmdmgr/cmdmgr_buffer.i"
+	@echo "... cmdmgr/cmdmgr_buffer.s"
 	@echo "... cmdmgr/cmdmgr_cmd.o"
 	@echo "... cmdmgr/cmdmgr_cmd.i"
 	@echo "... cmdmgr/cmdmgr_cmd.s"
+	@echo "... cmdmgr/cmdmgr_crc.o"
+	@echo "... cmdmgr/cmdmgr_crc.i"
+	@echo "... cmdmgr/cmdmgr_crc.s"
+	@echo "... cmdmgr/cmdmgr_handler.o"
+	@echo "... cmdmgr/cmdmgr_handler.i"
+	@echo "... cmdmgr/cmdmgr_handler.s"
 	@echo "... ctrlmgr/ctrlmgr_ctrl.o"
 	@echo "... ctrlmgr/ctrlmgr_ctrl.i"
 	@echo "... ctrlmgr/ctrlmgr_ctrl.s"
+	@echo "... ctrlmgr/ctrlmgr_pid.o"
+	@echo "... ctrlmgr/ctrlmgr_pid.i"
+	@echo "... ctrlmgr/ctrlmgr_pid.s"
 .PHONY : help
 
 
