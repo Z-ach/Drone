@@ -4,13 +4,11 @@ SharedStatus status; //contains state and mutex lock
 
 void init(){
 	status.state = NULL;
-	pthread_mutex_init(status.lock, NULL);
+
 }
 
 void start(){
-	//pthread_t cmd_thread;
 
-	//pthread_create(&cmd_thread, NULL, &cmd_handler, NULL);
 }
 
 

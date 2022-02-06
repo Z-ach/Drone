@@ -1,5 +1,6 @@
 cmake_minimum_required (VERSION 3.5)
 
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 project (Drone)
@@ -16,7 +17,10 @@ include_directories("${PROJECT_SOURCE_DIR}")
 add_executable(Drone
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.c
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.h
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_pid.c
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_pid.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_stat.h
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_state.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_cmd.c
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_cmd.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_handler.c
@@ -25,8 +29,7 @@ add_executable(Drone
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_buffer.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_crc.c
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_crc.h
-		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_pub.h
-		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_state.h)
+		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_pub.h)
 
 
 #target_link_libraries(Drone Threads)
