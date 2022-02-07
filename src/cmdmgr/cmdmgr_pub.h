@@ -6,10 +6,11 @@
 
 /*	Command Modes	*/
 typedef enum {
-    TAKE_OFF	=	0x00,
-    LAND		=	0x01,
-    HOVER		=	0x02,
-    PATROL		=	0x03
+    NO_OP   	=	0x00,
+    TAKE_OFF	=	0x01,
+    LAND		=	0x02,
+    HOVER		=	0x03,
+    PATROL		=	0x04
 } CommandMode;
 
 /*	Parameters		*/

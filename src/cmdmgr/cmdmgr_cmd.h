@@ -18,6 +18,7 @@
 OperationStatus handoff_recv_cmd(uint32_t cmd);
 OperationStatus parse_cmd(Command *cmd, uint32_t cmd_raw);
 
+void emergency_landing(Command *cmd);
 void execute_emergency_landing(void);
 
 
@@ -31,10 +32,10 @@ typedef enum {
 } CmdMasks;
 
 typedef enum {
-	PARAM_ALT_MASK	= 0xFF,
-	PARAM_EMER_MASK	= 0x03,
-	PARAM_LOC_MASK	= 0xFC,
-	PARAM_MNTN_MASK	= 0x03
+	PARAM_ALT_MASK	= 0xFF00,
+	PARAM_EMER_MASK	= 0x0003,
+	PARAM_LOC_MASK	= 0xFF00,
+	PARAM_MNTN_MASK	= 0x0300
 } ParamMasks;
 
 

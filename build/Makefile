@@ -285,6 +285,33 @@ ctrlmgr/ctrlmgr_pid.c.s:
 	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_pid.c.s
 .PHONY : ctrlmgr/ctrlmgr_pid.c.s
 
+netmgr/netmgr_handler.o: netmgr/netmgr_handler.c.o
+
+.PHONY : netmgr/netmgr_handler.o
+
+# target to build an object file
+netmgr/netmgr_handler.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/netmgr/netmgr_handler.c.o
+.PHONY : netmgr/netmgr_handler.c.o
+
+netmgr/netmgr_handler.i: netmgr/netmgr_handler.c.i
+
+.PHONY : netmgr/netmgr_handler.i
+
+# target to preprocess a source file
+netmgr/netmgr_handler.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/netmgr/netmgr_handler.c.i
+.PHONY : netmgr/netmgr_handler.c.i
+
+netmgr/netmgr_handler.s: netmgr/netmgr_handler.c.s
+
+.PHONY : netmgr/netmgr_handler.s
+
+# target to generate assembly for a file
+netmgr/netmgr_handler.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/netmgr/netmgr_handler.c.s
+.PHONY : netmgr/netmgr_handler.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -312,6 +339,9 @@ help:
 	@echo "... ctrlmgr/ctrlmgr_pid.o"
 	@echo "... ctrlmgr/ctrlmgr_pid.i"
 	@echo "... ctrlmgr/ctrlmgr_pid.s"
+	@echo "... netmgr/netmgr_handler.o"
+	@echo "... netmgr/netmgr_handler.i"
+	@echo "... netmgr/netmgr_handler.s"
 .PHONY : help
 
 
