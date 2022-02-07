@@ -1,10 +1,15 @@
 #include "cmdmgr_cmd.h"
 
-OperationStatus handoff_recv_cmd(uint32_t cmd){
+void msg_to_uint32(char *msg, uint32_t *cmd){
+	sscanf(msg, "%"SCNu32, cmd);
+	printf("msg val: %s\n", msg);
+	printf("cmd val: 0x%16X\n", *cmd);
+}
 
-
-	//Command *actual_cmd = malloc(sizeof(*actual_cmd));
+OperationStatus handoff_recv_cmd(char *msg){
 	Command actual_cmd;
+	uint32_t cmd;
+	msg_to_uint32(msg, &cmd);
 	OperationStatus parse_result = parse_cmd(&actual_cmd, cmd);
 
 	if(parse_result != STATUS_OK){

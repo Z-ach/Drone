@@ -7,9 +7,11 @@ static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t buffer_cond = PTHREAD_COND_INITIALIZER;
 static pthread_cond_t command_cond = PTHREAD_COND_INITIALIZER;
 
+SharedStatus *status;
 
-void init_shared_status(SharedStatus *status){
+void init_shared_status(){
 	// Create shared status
+	status = malloc(sizeof(*status));
 	status->state = malloc(sizeof(*status->state));
 	status->state->current_cmd = malloc(sizeof(*status->state->current_cmd));
 	status->state->current_cmd->counter = 0;
@@ -22,23 +24,23 @@ void init_shared_status(SharedStatus *status){
 	status->command_cond = &command_cond;
 }
 
-
-void init(SharedStatus *status){
-	init_shared_status(status);
+void init(){
+	// Create shared status
+	init_shared_status();
 	// Initialize command buffer
 	init_cmd_buf();
 }
 
-void start(SharedStatus *status){
+void start(){
 	printf("Starting threads.\n");
 	// Start the command handler
 	pthread_create(&cmdmgr_thread, NULL, &cmd_handler, status);
-	sleep(1);
+	//sleep(1);
 	// Start network manager
-	pthread_create(&netmgr_thread, NULL, &net_handler, NULL);
+	pthread_create(&netmgr_thread, NULL, &net_handler, status);
 }
 
-void test(SharedStatus *status){
+void test(){
 	uint32_t cmds[] = {
 		0x01100000, //0 = COUNTER, 1 = TAKEOFF, 1000 = 16 INCHES, 00 = CRC
 		0x13C00000, //1 = COUNTER, 3 = HOVER, C000 = IN PLACE HOVER, 00 = CRC
@@ -70,7 +72,7 @@ void test(SharedStatus *status){
 	*/
 }
 
-void end(SharedStatus *status){
+void end(){
 	pthread_join(netmgr_thread, NULL);
 	pthread_join(cmdmgr_thread, NULL);
 	free(status->state);
@@ -79,9 +81,9 @@ void end(SharedStatus *status){
 
 int main(int argc, char *argv[]){
 	printf("running main\n");
-	SharedStatus *status = malloc(sizeof(SharedStatus));
-	init(status);
-	start(status);
-	test(status);
-	//end();
+	//SharedStatus *status = malloc(sizeof(SharedStatus));
+	init();
+	start();
+	//test();
+	end();
 }

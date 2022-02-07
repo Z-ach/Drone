@@ -1,12 +1,5 @@
 #include "cmdmgr_handler.h"
 
-typedef enum {
-	NEXT_BUFFER = 0,
-	FORCE_LAND = 1
-} StateUpdateMethod;
-
-BufferStatus update_state_from_buffer(SharedStatus *status, StateUpdateMethod update_method);
-
 // Use void * then cast to allow usage with pthreads
 void *cmd_handler(void *shared_status){
     printf("Command handler successfully initialized.\n");
@@ -60,6 +53,7 @@ BufferStatus update_state_from_buffer(SharedStatus *status, StateUpdateMethod up
 		emergency_landing(next_command);
 	}
 
+	free(status->state->current_cmd);
 	status->state->current_cmd = next_command;
 	printf("State update successful.\n");
 	printf("\tcounter: %d\n", next_command->counter);

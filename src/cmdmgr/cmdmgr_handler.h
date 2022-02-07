@@ -9,6 +9,12 @@
 #include "cmdmgr_buffer.h"
 #include "cmdmgr_cmd.h"
 
+typedef enum {
+	NEXT_BUFFER = 0,
+	FORCE_LAND = 1
+} StateUpdateMethod;
+
 void *cmd_handler();
+BufferStatus update_state_from_buffer(SharedStatus *status, StateUpdateMethod update_method);
 
 #endif

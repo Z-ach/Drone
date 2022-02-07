@@ -43,10 +43,6 @@ BufferStatus insert_into_cmd_buf(Command cmd){
 	return CMD_BUFFER_OK;
 }
 
-uint8_t check_buf_size(){
-	return cmd_buf_size;
-}
-
 BufferStatus fetch_next_cmd(Command *cmd){
 	if(cmd_buf_size == 0) return CMD_BUFFER_EMPTY;
 
