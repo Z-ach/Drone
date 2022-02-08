@@ -12,8 +12,16 @@ typedef enum RunStatus{
     STOP = 1
 } RunStatus;
 
+typedef enum CommandInfo{
+    NO_COMMANDS_QUEUED = 0,
+    WAIT_FOR_FINISH = 1,
+    PREEMPT_REQUESTED = 2,
+} CommandInfo;
+
 typedef struct State{
     Command *current_cmd;
+    Command *next_cmd;
+    CommandInfo command_info;
     RunStatus run_status;
 } State;
 

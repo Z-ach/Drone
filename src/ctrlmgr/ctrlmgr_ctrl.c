@@ -18,17 +18,21 @@ void init_shared_status(){
 	status->state->current_cmd->mode = NO_OP;
 	status->state->current_cmd->status = STATUS_FINISHED;
 	status->state->run_status = RUNNING;
+	status->state->next_cmd = NULL;
 
 	status->lock = &lock;	
 	status->buffer_cond = &buffer_cond;
 	status->command_cond = &command_cond;
 }
 
+
 void init(){
 	// Create shared status
 	init_shared_status();
 	// Initialize command buffer
 	init_cmd_buf();
+	// Initialize hardware
+	init_hardware();
 }
 
 void start(){
@@ -38,6 +42,8 @@ void start(){
 	//sleep(1);
 	// Start network manager
 	pthread_create(&netmgr_thread, NULL, &net_handler, status);
+	// Current thread will be used for control management
+	ctrl_loop_run(status);
 }
 
 void test(){

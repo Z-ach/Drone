@@ -7,6 +7,8 @@
 
 #include "ctrlmgr_stat.h"
 #include "ctrlmgr_state.h"
+#include "ctrlmgr_loop.h"
+#include "ctrlmgr_hw.h"
 #include <cmdmgr/cmdmgr_cmd.h>
 #include <cmdmgr/cmdmgr_handler.h>
 #include <cmdmgr/cmdmgr_buffer.h>

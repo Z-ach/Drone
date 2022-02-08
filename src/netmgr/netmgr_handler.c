@@ -15,7 +15,6 @@ int create_socket(server_t *socket_fd, int timeout){
 
 int bind_socket(server_t *socket_fd, struct sockaddr_in *server){
     int err;
-    //server->sin_addr.s_addr = inet_addr(IP_ADDRESS);
     server->sin_addr.s_addr = INADDR_ANY;
     server->sin_family = AF_INET;
     server->sin_port = htons(8888);
