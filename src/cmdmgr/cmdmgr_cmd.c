@@ -2,8 +2,7 @@
 
 void msg_to_uint32(char *msg, uint32_t *cmd){
 	sscanf(msg, "%"SCNu32, cmd);
-	LOG_CMD("msg val: %s\n", msg);
-	LOG_CMD("cmd val: 0x%16X\n", *cmd);
+	LOG_NET("cmd val: 0x%08X\n", *cmd);
 }
 
 OperationStatus handoff_recv_cmd(char *msg){
@@ -16,14 +15,14 @@ OperationStatus handoff_recv_cmd(char *msg){
 		return parse_result;
 	}
 
-	LOG_CMD("Attempting to insert into buffer\n");
+	LOG_NET("Attempting to insert into buffer\n");
 	BufferStatus stat = insert_into_cmd_buf(actual_cmd);
 
 	if(stat == CMD_BUFFER_OK){
-		LOG_CMD("Success!\n");
+		LOG_NET("Success!\n");
 	}
 	else{
-		LOG_CMD("BUFFER FULL\n");
+		LOG_NET("BUFFER FULL\n");
 	}
 
 	return (stat == CMD_BUFFER_OK) ? STATUS_OK : STATUS_FAIL;
@@ -38,7 +37,7 @@ OperationStatus parse_cmd(Command *actual_cmd, uint32_t raw_cmd){
 	//First, validate CRC8
 	if(crc8(raw_cmd) != STATUS_OK){
 		//Bad crc8, something went wrong in transmission
-		LOG_CMD("CRC8 validation failed. Could not process command\n");
+		LOG_NET("CRC8 validation failed. Could not process command\n");
 		return STATUS_FAIL;
 	}
 
@@ -52,23 +51,23 @@ OperationStatus parse_cmd(Command *actual_cmd, uint32_t raw_cmd){
 	switch(mode){
 		case TAKE_OFF:
 			actual_cmd->params.TakeOff.altitude = params >> 8;
-			LOG_CMD("Registered cmd as TAKEOFF\n\tParams:\t0x%04X\n", params);
-			LOG_CMD("\tProceeding to altitude: %d inches\n", actual_cmd->params.TakeOff.altitude );
+			LOG_NET("Registered cmd as TAKEOFF\n\tParams:\t0x%04X\n", params);
+			LOG_NET("\tProceeding to altitude: %d inches\n", actual_cmd->params.TakeOff.altitude );
 			break;
 		case LAND:
 			actual_cmd->params.Land.emergency = params & PARAM_EMER_MASK;
 			actual_cmd->params.Land.location = (params & PARAM_LOC_MASK) >> 8;
-			LOG_CMD("Registered cmd as LAND\n\tParams:\t0x%04X\n", params);
-			LOG_CMD("\tEmergency flag: %d\tLanding location: %d\n", actual_cmd->params.Land.emergency, actual_cmd->params.Land.location);
+			LOG_NET("Registered cmd as LAND\n\tParams:\t0x%04X\n", params);
+			LOG_NET("\tEmergency flag: %d\tLanding location: %d\n", actual_cmd->params.Land.emergency, actual_cmd->params.Land.location);
 			//ensure that it is not an emergency landing request
 			break;
 		case HOVER:
 			//process
-			LOG_CMD("Registered cmd as HOVER\n\tParams:\t0x%04X\n", params);
+			LOG_NET("Registered cmd as HOVER\n\tParams:\t0x%04X\n", params);
 			break;
 		case PATROL:
 			//unimplemented
-			LOG_CMD("Registered cmd as PATROL\n\tParams:\t0x%04X\n", params);
+			LOG_NET("Registered cmd as PATROL\n\tParams:\t0x%04X\n", params);
 			break;
 		default:
 			//No valid mode sent
@@ -91,4 +90,32 @@ void emergency_landing(Command *cmd){
 	cmd->mode = LAND;
 	//cmd->params = EMERGENCY_ON,
 	cmd->status = STATUS_WAITING;
+}
+
+const char *get_cmd_mode_name(CommandMode mode){
+	switch(mode){
+		case NO_OP:
+			return "NO_OP";
+		case TAKE_OFF:
+			return "TAKE_OFF";
+		case LAND:
+			return "LAND";
+		case HOVER:
+			return "HOVER";
+		case PATROL:
+			return "PATROL";
+	}
+}
+
+const char *get_cmd_status_name(CommandStatus status){
+	switch(status){
+		case STATUS_WAITING:
+			return "STATUS_WAITING";
+		case STATUS_EXECUTING :
+			return "STATUS_EXECUTING";
+		case STATUS_FINISHED:
+			return "STATUS_FINISHED";
+		case STATUS_FAILED:
+			return "STATUS_FAILED";
+	}
 }

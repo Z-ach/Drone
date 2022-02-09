@@ -22,6 +22,8 @@ OperationStatus parse_cmd(Command *cmd, uint32_t cmd_raw);
 
 void emergency_landing(Command *cmd);
 void execute_emergency_landing(void);
+const char *get_cmd_mode_name(CommandMode mode);
+const char *get_cmd_status_name(CommandStatus status);
 
 
 

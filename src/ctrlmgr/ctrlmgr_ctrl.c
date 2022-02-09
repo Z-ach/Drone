@@ -18,6 +18,7 @@ void init_shared_status(){
 	status->state->current_cmd->mode = NO_OP;
 	status->state->current_cmd->status = STATUS_FINISHED;
 	status->state->run_status = RUNNING;
+	status->state->netmgr_status = RUNNING;
 	status->state->next_cmd = NULL;
 
 	status->lock = &lock;

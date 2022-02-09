@@ -56,7 +56,7 @@ BufferStatus fetch_next_cmd(Command *cmd){
 	//move head to next
 	cmd_node_head = next;
 
-	LOG_CMD("count:\t%d\nmode:\t%d\n", cmd->counter, cmd->mode);
+	//LOG_CMD("count:\t%d\nmode:\t%d\n", cmd->counter, cmd->mode);
 	cmd_buf_size--;
 	return CMD_BUFFER_OK;
 }

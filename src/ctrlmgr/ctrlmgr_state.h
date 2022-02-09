@@ -23,6 +23,7 @@ typedef struct State{
     Command *next_cmd;
     CommandInfo command_info;
     RunStatus run_status;
+    RunStatus netmgr_status;
 } State;
 
 typedef struct SharedStatus{

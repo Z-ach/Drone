@@ -9,6 +9,7 @@
 #include "ctrlmgr_state.h"
 #include "ctrlmgr_stat.h"
 #include <cmdmgr/cmdmgr_pub.h>
+#include <cmdmgr/cmdmgr_cmd.h>
 #include <logmgr/logmgr.h>
 
 void ctrl_loop_run(SharedStatus *status);

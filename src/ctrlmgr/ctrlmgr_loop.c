@@ -29,6 +29,9 @@ OperationStatus dispatch_cmd(SharedStatus *status){
     if (status->state->current_cmd->status == STATUS_FINISHED && status->state->next_cmd != NULL){
         cur_cmd = status->state->next_cmd;
         LOG_CTRL("Next command was available, using that one!\n");
+        LOG_CTRL("\tcounter: %d\n", cur_cmd->counter);
+        LOG_CTRL("\tmode: %s\n", get_cmd_mode_name(cur_cmd->mode));
+        LOG_CTRL("\tstatus: %s\n\n", get_cmd_status_name(cur_cmd->status));
     }else if(status->state->current_cmd->status == STATUS_FINISHED){
         //LOG_CTRL("Current command is set to finished, but no next_cmd available.\n");
     }else{
@@ -39,7 +42,7 @@ OperationStatus dispatch_cmd(SharedStatus *status){
     cur_cmd->status = STATUS_EXECUTING;
     pthread_mutex_unlock(status->lock);
 
-    switch(status->state->current_cmd->mode){
+    switch(cur_cmd->mode){
         case NO_OP:
             stat = STATUS_FINISHED;
             break;

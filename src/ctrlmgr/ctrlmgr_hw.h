@@ -3,9 +3,11 @@
 
 /* #undef HW_BUILD */
 
+#include <unistd.h>
+
 #ifdef HW_BUILD
-    #include <rc/time.h>
-    #include <rc/servo.h>
+#include <rc/time.h>
+#include <rc/servo.h>
 #endif
 
 void init_hardware();

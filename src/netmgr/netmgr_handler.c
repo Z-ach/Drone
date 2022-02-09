@@ -65,7 +65,7 @@ void *net_handler(void *shared_status){
         read_size = recv(client_socket.listen_fd, client_message, 2000, 0);
         if(read_size > 0){
             client_message[read_size] = '\0';
-            LOG_NET("recv: %s\n", client_message);
+            LOG_NET("recv: %s (%d bytes)\n", client_message, read_size);
             stat = handoff_recv_cmd(client_message);
             pthread_cond_signal(status->buffer_cond);
             write(client_socket.listen_fd, ack_message, strlen(ack_message));
@@ -80,10 +80,12 @@ void *net_handler(void *shared_status){
         if(status->state->run_status == STOP){
             running = 0;
         }
-        pthread_mutex_unlock(status->lock);
         if(!running){
+            status->state->netmgr_status = STOP;
+            pthread_mutex_unlock(status->lock);
             break;
         }
+        pthread_mutex_unlock(status->lock);
     }
     close(server_socket.listen_fd);
     LOG_NET("Server shutdown successful.\n");
