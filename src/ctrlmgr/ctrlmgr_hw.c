@@ -26,38 +26,6 @@ void enable_leds(){
         rc_usleep(WAIT_US);
         rc_led_set(RC_LED_RED,0);
 
-        rc_led_set(RC_LED_USR0,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_USR0,0);
-
-        rc_led_set(RC_LED_USR1,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_USR1,0);
-
-        rc_led_set(RC_LED_USR2,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_USR2,0);
-
-        rc_led_set(RC_LED_USR3,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_USR3,0);
-
-        rc_led_set(RC_LED_BAT25,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_BAT25,0);
-
-        rc_led_set(RC_LED_BAT50,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_BAT50,0);
-
-        rc_led_set(RC_LED_BAT75,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_BAT75,0);
-
-        rc_led_set(RC_LED_BAT100,1);
-        rc_usleep(WAIT_US);
-        rc_led_set(RC_LED_BAT100,0);
-
         rc_led_cleanup();
     #endif
     

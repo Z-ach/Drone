@@ -20,7 +20,7 @@ void init_shared_status(){
 	status->state->run_status = RUNNING;
 	status->state->next_cmd = NULL;
 
-	status->lock = &lock;	
+	status->lock = &lock;
 	status->buffer_cond = &buffer_cond;
 	status->command_cond = &command_cond;
 }

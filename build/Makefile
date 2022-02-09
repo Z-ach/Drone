@@ -258,6 +258,60 @@ ctrlmgr/ctrlmgr_ctrl.c.s:
 	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_ctrl.c.s
 .PHONY : ctrlmgr/ctrlmgr_ctrl.c.s
 
+ctrlmgr/ctrlmgr_hw.o: ctrlmgr/ctrlmgr_hw.c.o
+
+.PHONY : ctrlmgr/ctrlmgr_hw.o
+
+# target to build an object file
+ctrlmgr/ctrlmgr_hw.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_hw.c.o
+.PHONY : ctrlmgr/ctrlmgr_hw.c.o
+
+ctrlmgr/ctrlmgr_hw.i: ctrlmgr/ctrlmgr_hw.c.i
+
+.PHONY : ctrlmgr/ctrlmgr_hw.i
+
+# target to preprocess a source file
+ctrlmgr/ctrlmgr_hw.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_hw.c.i
+.PHONY : ctrlmgr/ctrlmgr_hw.c.i
+
+ctrlmgr/ctrlmgr_hw.s: ctrlmgr/ctrlmgr_hw.c.s
+
+.PHONY : ctrlmgr/ctrlmgr_hw.s
+
+# target to generate assembly for a file
+ctrlmgr/ctrlmgr_hw.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_hw.c.s
+.PHONY : ctrlmgr/ctrlmgr_hw.c.s
+
+ctrlmgr/ctrlmgr_loop.o: ctrlmgr/ctrlmgr_loop.c.o
+
+.PHONY : ctrlmgr/ctrlmgr_loop.o
+
+# target to build an object file
+ctrlmgr/ctrlmgr_loop.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_loop.c.o
+.PHONY : ctrlmgr/ctrlmgr_loop.c.o
+
+ctrlmgr/ctrlmgr_loop.i: ctrlmgr/ctrlmgr_loop.c.i
+
+.PHONY : ctrlmgr/ctrlmgr_loop.i
+
+# target to preprocess a source file
+ctrlmgr/ctrlmgr_loop.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_loop.c.i
+.PHONY : ctrlmgr/ctrlmgr_loop.c.i
+
+ctrlmgr/ctrlmgr_loop.s: ctrlmgr/ctrlmgr_loop.c.s
+
+.PHONY : ctrlmgr/ctrlmgr_loop.s
+
+# target to generate assembly for a file
+ctrlmgr/ctrlmgr_loop.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_loop.c.s
+.PHONY : ctrlmgr/ctrlmgr_loop.c.s
+
 ctrlmgr/ctrlmgr_pid.o: ctrlmgr/ctrlmgr_pid.c.o
 
 .PHONY : ctrlmgr/ctrlmgr_pid.o
@@ -336,6 +390,12 @@ help:
 	@echo "... ctrlmgr/ctrlmgr_ctrl.o"
 	@echo "... ctrlmgr/ctrlmgr_ctrl.i"
 	@echo "... ctrlmgr/ctrlmgr_ctrl.s"
+	@echo "... ctrlmgr/ctrlmgr_hw.o"
+	@echo "... ctrlmgr/ctrlmgr_hw.i"
+	@echo "... ctrlmgr/ctrlmgr_hw.s"
+	@echo "... ctrlmgr/ctrlmgr_loop.o"
+	@echo "... ctrlmgr/ctrlmgr_loop.i"
+	@echo "... ctrlmgr/ctrlmgr_loop.s"
 	@echo "... ctrlmgr/ctrlmgr_pid.o"
 	@echo "... ctrlmgr/ctrlmgr_pid.i"
 	@echo "... ctrlmgr/ctrlmgr_pid.s"

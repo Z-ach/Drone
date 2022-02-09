@@ -6,8 +6,7 @@ void *cmd_handler(void *shared_status){
 	SharedStatus *status = shared_status;
 	printf("Found initial command: %d\n", status->state->current_cmd->status);
 
-	uint8_t max_iter = 10;
-	while(max_iter-- > 5){
+	while(1){
 		pthread_mutex_lock(status->lock);
 		//printf("Command state mutex acquired.\n");
 		printf("Command status: %d\n", status->state->current_cmd->status);
@@ -41,6 +40,7 @@ void *cmd_handler(void *shared_status){
 				break;
 		}
 		if(status->state->run_status != RUNNING){
+			printf("Cmd handler service has stopped.\n");
 			pthread_mutex_unlock(status->lock);
 			return NULL;
 		}
@@ -61,6 +61,7 @@ BufferStatus update_state_from_buffer(SharedStatus *status, StateUpdateMethod up
 			printf("Buffer is empty. Waiting for signal.\n");
 			pthread_cond_wait(status->buffer_cond, status->lock);
 			stat = fetch_next_cmd(next_command);
+			printf("Buffer condition tripped, resuming.\n");
 		}
 	} else{
 		emergency_landing(next_command);

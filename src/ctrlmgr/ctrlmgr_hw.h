@@ -1,7 +1,7 @@
 #ifndef CTRLMGR_HW_H
 #define CTRLMGR_HW_H
 
-/* #undef HW_BUILD */
+#define HW_BUILD
 
 #ifdef HW_BUILD
     #include <rc/time.h>
@@ -9,6 +9,5 @@
 #endif
 
 void init_hardware();
-void enable_leds();
 
 #endif

@@ -50,7 +50,8 @@ add_executable(Drone
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_crc.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_pub.h
 		${PROJECT_SOURCE_DIR}/netmgr/netmgr_handler.c
-		${PROJECT_SOURCE_DIR}/netmgr/netmgr_handler.h)
+		${PROJECT_SOURCE_DIR}/netmgr/netmgr_handler.h
+		${PROJECT_SOURCE_DIR}/logmgr/logmgr.h)
 
 
 target_link_libraries(Drone ${EXTRA_LIBS})

@@ -62,6 +62,9 @@ OperationStatus dispatch_cmd(SharedStatus *status){
     //printf("ctrl loop: cmd status updated to %d\n", stat);
     if(!keep_running){
         status->state->run_status = STOP;
+        printf("Ctrl loop service has stopped.\n");
+        // Signal buffer just in case cmd handler is waiting on empty buf
+        pthread_cond_signal(status->buffer_cond);
     }
     pthread_cond_signal(status->command_cond);
     pthread_mutex_unlock(status->lock);
@@ -72,6 +75,8 @@ OperationStatus dispatch_cmd(SharedStatus *status){
 CommandStatus exc_takeoff(Parameters params){
     fprintf(fp, "EXECUTING COMMAND: TakeOff\n");
     fprintf(fp, "\tRequested altitude: %d inches.\n", params.TakeOff.altitude);
+    printf("EXECUTING COMMAND: TakeOff\n");
+    printf("\tRequested altitude: %d inches.\n", params.TakeOff.altitude);
     enable_leds();
     //sleep(2);
     return STATUS_FINISHED;
@@ -80,6 +85,8 @@ CommandStatus exc_takeoff(Parameters params){
 CommandStatus exc_landing(Parameters params){
     fprintf(fp, "EXECUTING COMMAND: Landing\n");
     fprintf(fp, "\tRequested location: %d\tEmergency flag: %d.\n", params.Land.location, params.Land.emergency);
+    printf("EXECUTING COMMAND: Landing\n");
+    printf("\tRequested location: %d\tEmergency flag: %d.\n", params.Land.location, params.Land.emergency);
     //sleep(2);
     return STATUS_FINISHED;
 
@@ -88,6 +95,8 @@ CommandStatus exc_landing(Parameters params){
 CommandStatus exc_hover(Parameters params){
     fprintf(fp, "EXECUTING COMMAND: Hover\n");
     fprintf(fp, "\tRequested pos: %d\tMaintain flag: %d.\n", params.Hover.location, params.Hover.maintain);
+    printf("EXECUTING COMMAND: Hover\n");
+    printf("\tRequested pos: %d\tMaintain flag: %d.\n", params.Hover.location, params.Hover.maintain);
     //sleep(2);
     return STATUS_FINISHED;
 
