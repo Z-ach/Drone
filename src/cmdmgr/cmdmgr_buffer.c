@@ -39,7 +39,7 @@ BufferStatus insert_into_cmd_buf(Command cmd){
 		iter->next = new_cmd;
 	}
 	cmd_buf_size++;
-	printf("Insert Success\n");
+	LOG_CMD("Insert Success\n");
 	return CMD_BUFFER_OK;
 }
 
@@ -56,7 +56,7 @@ BufferStatus fetch_next_cmd(Command *cmd){
 	//move head to next
 	cmd_node_head = next;
 
-	printf("count:\t%d\nmode:\t%d\n", cmd->counter, cmd->mode);
+	LOG_CMD("count:\t%d\nmode:\t%d\n", cmd->counter, cmd->mode);
 	cmd_buf_size--;
 	return CMD_BUFFER_OK;
 }

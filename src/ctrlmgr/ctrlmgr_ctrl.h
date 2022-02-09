@@ -13,6 +13,7 @@
 #include <cmdmgr/cmdmgr_handler.h>
 #include <cmdmgr/cmdmgr_buffer.h>
 #include <netmgr/netmgr_handler.h>
+#include <logmgr/logmgr.h>
 
 
 /*	Functions				*/

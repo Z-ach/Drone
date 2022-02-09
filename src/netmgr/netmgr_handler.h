@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include <ctrlmgr/ctrlmgr_state.h>
+#include <logmgr/logmgr.h>
 #include "cmdmgr/cmdmgr_cmd.h"
 
 

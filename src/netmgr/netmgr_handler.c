@@ -9,7 +9,7 @@ int create_socket(server_t *socket_fd, int timeout){
     tv.tv_usec = 0;
     err = (socket_fd->listen_fd = socket(AF_INET, SOCK_STREAM, 0));
     setsockopt(socket_fd->listen_fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-    printf("set timeout to %d\n", timeout);
+    LOG_NET("set timeout to %d\n", timeout);
     return err;
 }
 
@@ -23,7 +23,7 @@ int bind_socket(server_t *socket_fd, struct sockaddr_in *server){
 }
 
 void *net_handler(void *shared_status){
-    printf("Network handler successfully initialized.\n");
+    LOG_NET("Network handler successfully initialized.\n");
     int err, c, read_size;
     int running = 1;
     char ack_message[] = "Acknowledged.";
@@ -38,7 +38,7 @@ void *net_handler(void *shared_status){
 
     err = create_socket(&server_socket, recv_timeout);
     if(err < 0){
-        printf("Unable to create socket.\n");
+        LOG_NET("Unable to create socket.\n");
         pthread_mutex_lock(status->lock);
         status->state->run_status = STOP;
         pthread_mutex_unlock(status->lock);
@@ -47,7 +47,7 @@ void *net_handler(void *shared_status){
 
     err = bind_socket(&server_socket, &server);
     if(err < 0){
-        printf("Unable to establish connection.\n");
+        LOG_NET("Unable to establish connection.\n");
         pthread_mutex_lock(status->lock);
         status->state->run_status = STOP;
         pthread_mutex_unlock(status->lock);
@@ -58,22 +58,22 @@ void *net_handler(void *shared_status){
 	c = sizeof(struct sockaddr_in);
     client_socket.listen_fd = accept(server_socket.listen_fd, (struct sockaddr *)&client, (socklen_t*)&c);
     setsockopt(client_socket.listen_fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
-    printf("Connection accepted.\n");
+    LOG_NET("Connection accepted.\n");
     while(running){
         pthread_mutex_lock(status->lock);
 
         read_size = recv(client_socket.listen_fd, client_message, 2000, 0);
         if(read_size > 0){
             client_message[read_size] = '\0';
-            printf("recv: %s\n", client_message);
+            LOG_NET("recv: %s\n", client_message);
             stat = handoff_recv_cmd(client_message);
             pthread_cond_signal(status->buffer_cond);
             write(client_socket.listen_fd, ack_message, strlen(ack_message));
         } else if(read_size == 0){
-            printf("Client disconnected.\n");
+            LOG_NET("Client disconnected.\n");
             running = 0;
         } else if(read_size < 0){
-            printf("Timeout exceeded.\n");
+            LOG_NET("Timeout exceeded.\n");
             running = 0;
         }
 
@@ -86,6 +86,6 @@ void *net_handler(void *shared_status){
         }
     }
     close(server_socket.listen_fd);
-    printf("Server shutdown successful.\n");
+    LOG_NET("Server shutdown successful.\n");
     return NULL;
 }

@@ -7,7 +7,7 @@ OperationStatus crc8(uint32_t cmd){
 
 	segment_success = segment_bytes(data, cmd);
 	if(segment_success != STATUS_OK){
-		printf("Unable to segment command data. Invalid?\n");
+		LOG_CMD("Unable to segment command data. Invalid?\n");
 		crc_status = STATUS_FAIL;
 	}else{
 		for(int i = 0; i < 4; i++){

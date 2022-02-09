@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include <ctrlmgr/ctrlmgr_stat.h>
+#include <logmgr/logmgr.h>
 
 #include "cmdmgr_pub.h"
 #include "cmdmgr_crc.h"

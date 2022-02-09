@@ -36,7 +36,7 @@ void init(){
 }
 
 void start(){
-	printf("Starting threads.\n");
+	LOG_CTRL("Starting threads.\n");
 	// Start the command handler
 	pthread_create(&cmdmgr_thread, NULL, &cmd_handler, status);
 	//sleep(1);
@@ -47,26 +47,26 @@ void start(){
 }
 
 void test(){
-	uint32_t cmds[] = {
-		0x01100000, //0 = COUNTER, 1 = TAKEOFF, 1000 = 16 INCHES, 00 = CRC
-		0x13C00000, //1 = COUNTER, 3 = HOVER, C000 = IN PLACE HOVER, 00 = CRC
-		0x22031100  //2 = COUNTER, 2 = LAND, 03 = LOCATION 3, 11 = EMERGENCY, 00 = CRC
+	char *cmds[3] = {
+		"01100000", //0 = COUNTER, 1 = TAKEOFF, 1000 = 16 INCHES, 00 = CRC
+		"13C00000", //1 = COUNTER, 3 = HOVER, C000 = IN PLACE HOVER, 00 = CRC
+		"22031100"  //2 = COUNTER, 2 = LAND, 03 = LOCATION 3, 11 = EMERGENCY, 00 = CRC
 	};
 
 	for(int i = 0; i < 3; i++){
-		printf("Handing off command: %d\n", i);
+		LOG_CTRL("Handing off command: %d\n", i);
 		pthread_mutex_lock(status->lock);
-		printf("Buffer mutex acquired.\n");
+		LOG_CTRL("Buffer mutex acquired.\n");
 		handoff_recv_cmd(cmds[i]);
-		printf("Triggering buffer condition signal.\n");
+		LOG_CTRL("Triggering buffer condition signal.\n");
 		pthread_cond_signal(status->buffer_cond);
 		pthread_mutex_unlock(status->lock);
-		printf("Buffer mutex released.\n");
+		LOG_CTRL("Buffer mutex released.\n");
 		sleep(1);
-		printf("Marking command as complete.\n");
+		LOG_CTRL("Marking command as complete.\n");
 		pthread_mutex_lock(status->lock);
 		status->state->current_cmd->status = STATUS_FINISHED;
-		printf("Triggering command condition signal.\n");
+		LOG_CTRL("Triggering command condition signal.\n");
 		pthread_cond_signal(status->command_cond);
 		pthread_mutex_unlock(status->lock);
 	}
@@ -86,7 +86,7 @@ void end(){
 }
 
 int main(int argc, char *argv[]){
-	printf("running main\n");
+	LOG_CTRL("running main\n");
 	//SharedStatus *status = malloc(sizeof(SharedStatus));
 	init();
 	start();

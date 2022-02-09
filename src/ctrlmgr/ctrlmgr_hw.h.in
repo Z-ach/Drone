@@ -9,5 +9,6 @@
 #endif
 
 void init_hardware();
+void enable_leds();
 
 #endif

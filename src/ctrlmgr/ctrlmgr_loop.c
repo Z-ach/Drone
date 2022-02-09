@@ -28,11 +28,11 @@ OperationStatus dispatch_cmd(SharedStatus *status){
     // is available (via next_cmd), then start executing the next command.
     if (status->state->current_cmd->status == STATUS_FINISHED && status->state->next_cmd != NULL){
         cur_cmd = status->state->next_cmd;
-        printf("Next command was available, using that one!\n");
+        LOG_CTRL("Next command was available, using that one!\n");
     }else if(status->state->current_cmd->status == STATUS_FINISHED){
-        //printf("Current command is set to finished, but no next_cmd available.\n");
+        //LOG_CTRL("Current command is set to finished, but no next_cmd available.\n");
     }else{
-        //printf("State not finished, next cmd may be available.\n");
+        //LOG_CTRL("State not finished, next cmd may be available.\n");
     }
 
 
@@ -59,10 +59,10 @@ OperationStatus dispatch_cmd(SharedStatus *status){
     }
     pthread_mutex_lock(status->lock);
     cur_cmd->status = stat;
-    //printf("ctrl loop: cmd status updated to %d\n", stat);
+    //LOG_CTRL("ctrl loop: cmd status updated to %d\n", stat);
     if(!keep_running){
         status->state->run_status = STOP;
-        printf("Ctrl loop service has stopped.\n");
+        LOG_CTRL("Ctrl loop service has stopped.\n");
         // Signal buffer just in case cmd handler is waiting on empty buf
         pthread_cond_signal(status->buffer_cond);
     }
@@ -75,8 +75,8 @@ OperationStatus dispatch_cmd(SharedStatus *status){
 CommandStatus exc_takeoff(Parameters params){
     fprintf(fp, "EXECUTING COMMAND: TakeOff\n");
     fprintf(fp, "\tRequested altitude: %d inches.\n", params.TakeOff.altitude);
-    printf("EXECUTING COMMAND: TakeOff\n");
-    printf("\tRequested altitude: %d inches.\n", params.TakeOff.altitude);
+    LOG_CTRL("EXECUTING COMMAND: TakeOff\n");
+    LOG_CTRL("\tRequested altitude: %d inches.\n", params.TakeOff.altitude);
     enable_leds();
     //sleep(2);
     return STATUS_FINISHED;
@@ -85,8 +85,8 @@ CommandStatus exc_takeoff(Parameters params){
 CommandStatus exc_landing(Parameters params){
     fprintf(fp, "EXECUTING COMMAND: Landing\n");
     fprintf(fp, "\tRequested location: %d\tEmergency flag: %d.\n", params.Land.location, params.Land.emergency);
-    printf("EXECUTING COMMAND: Landing\n");
-    printf("\tRequested location: %d\tEmergency flag: %d.\n", params.Land.location, params.Land.emergency);
+    LOG_CTRL("EXECUTING COMMAND: Landing\n");
+    LOG_CTRL("\tRequested location: %d\tEmergency flag: %d.\n", params.Land.location, params.Land.emergency);
     //sleep(2);
     return STATUS_FINISHED;
 
@@ -95,8 +95,8 @@ CommandStatus exc_landing(Parameters params){
 CommandStatus exc_hover(Parameters params){
     fprintf(fp, "EXECUTING COMMAND: Hover\n");
     fprintf(fp, "\tRequested pos: %d\tMaintain flag: %d.\n", params.Hover.location, params.Hover.maintain);
-    printf("EXECUTING COMMAND: Hover\n");
-    printf("\tRequested pos: %d\tMaintain flag: %d.\n", params.Hover.location, params.Hover.maintain);
+    LOG_CTRL("EXECUTING COMMAND: Hover\n");
+    LOG_CTRL("\tRequested pos: %d\tMaintain flag: %d.\n", params.Hover.location, params.Hover.maintain);
     //sleep(2);
     return STATUS_FINISHED;
 

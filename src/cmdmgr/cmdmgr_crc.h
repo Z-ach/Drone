@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include <ctrlmgr/ctrlmgr_stat.h>
+#include <logmgr/logmgr.h>
 
 OperationStatus crc8(uint32_t cmd);
 OperationStatus segment_bytes(uint8_t *buffer, uint32_t cmd);
