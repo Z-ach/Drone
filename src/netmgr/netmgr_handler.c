@@ -27,8 +27,8 @@ void *net_handler(void *shared_status){
     int err, c, read_size;
     int running = 1;
     char ack_message[] = "Acknowledged.";
-    char client_message[RECV_BUF_SIZE];
-	char resp_buf[RESP_BUF_SIZE];
+    char client_message[RECV_BUF_SIZE] = {0};
+	char resp_buf[RESP_BUF_SIZE] = {0};
     server_t server_socket, client_socket;
     struct sockaddr_in server, client;
     struct timeval tv;
@@ -100,17 +100,18 @@ void msg_to_uint32(char *msg, uint32_t *cmd){
 
 // Send received message to proper location
 void dispatch_recv_msg(char *client_message, char *resp){
-    uint32_t *cmd;
-	uint32_t res;
-	msg_to_uint32(client_message, cmd);
+    uint32_t cmd;
+	msg_to_uint32(client_message, &cmd);
 
-	res = (*cmd & NET_DISPATCH_MASK) >> 16;
-	if(res == NET_DISPATCH_MASK){
+	if(((cmd & NET_DISPATCH_MASK) >> 16) == (NET_DISPATCH_MASK>>16)){
+        LOG_NET("Request for telemetry received.\n");
 		//This is a request for telemetry
 		get_telemetry(resp, RESP_BUF_SIZE);
 	}else{
-		handoff_recv_cmd(*cmd);
-        resp = "Command acknowledegd.";
+        LOG_NET("Command received.\n");
+		handoff_recv_cmd(cmd);
+        memset(resp, 0, RESP_BUF_SIZE);
+        snprintf(resp, RESP_BUF_SIZE, "Command acknowledegd.");
         resp[RESP_BUF_SIZE-1] = '\0';
 	}
 }

@@ -17,7 +17,7 @@
 
 
 /*	Functions	*/
-OperationStatus handoff_recv_cmd(char *cmd);
+OperationStatus handoff_recv_cmd(uint32_t cmd);
 OperationStatus parse_cmd(Command *cmd, uint32_t cmd_raw);
 
 void emergency_landing(Command *cmd);

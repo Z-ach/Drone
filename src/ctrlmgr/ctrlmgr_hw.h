@@ -1,10 +1,12 @@
 #ifndef CTRLMGR_HW_H
 #define CTRLMGR_HW_H
 
-/* #undef HW_BUILD */
-
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include "ctrlmgr_hw_build.h"
+#include <logmgr/logmgr.h>
 
 #ifdef HW_BUILD
 #include <rc/time.h>
@@ -27,7 +29,7 @@ typedef struct Telemetry{
 
 void init_hardware();
 void enable_leds();
-void read_mpu(rc_mpu_data_t mpu_data);
+void read_mpu();
 void get_telemetry(char *resp_buf, int buf_size);
 void telem_to_resp(Telemetry telem, char *resp_buff, int buf_size);
 

@@ -2,6 +2,7 @@
 #define NETMGR_H
 
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -18,18 +19,19 @@ typedef struct server{
 } server_t;
 
 typedef enum {
-    NET_DISPATCH_MASK = 0xFFFF0000
+    NET_DISPATCH_MASK = (uint32_t)0xFFFF0000
 } NetMask;
 
 typedef enum{
     RECV_BUF_SIZE = 50,
-    RESP_BUF_SIZE = 50,
+    RESP_BUF_SIZE = 100,
 } NetBufferSizes;
 
 void *net_handler(void *status);
 int create_socket(server_t *socket_fd, int timeout);
 int bind_socket(server_t *socket_fd, struct sockaddr_in *server);
 void msg_to_uint32(char *msg, uint32_t *cmd);
+void dispatch_recv_msg(char *client_message, char *resp);
 
 
 # endif

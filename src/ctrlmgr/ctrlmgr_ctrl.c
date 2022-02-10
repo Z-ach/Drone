@@ -48,10 +48,10 @@ void start(){
 }
 
 void test(){
-	char *cmds[3] = {
-		"01100000", //0 = COUNTER, 1 = TAKEOFF, 1000 = 16 INCHES, 00 = CRC
-		"13C00000", //1 = COUNTER, 3 = HOVER, C000 = IN PLACE HOVER, 00 = CRC
-		"22031100"  //2 = COUNTER, 2 = LAND, 03 = LOCATION 3, 11 = EMERGENCY, 00 = CRC
+	uint32_t cmds[3] = {
+		0x01100000, //0 = COUNTER, 1 = TAKEOFF, 1000 = 16 INCHES, 00 = CRC
+		0x13C00000, //1 = COUNTER, 3 = HOVER, C000 = IN PLACE HOVER, 00 = CRC
+		0x22031100  //2 = COUNTER, 2 = LAND, 03 = LOCATION 3, 11 = EMERGENCY, 00 = CRC
 	};
 
 	for(int i = 0; i < 3; i++){
