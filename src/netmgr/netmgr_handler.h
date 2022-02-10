@@ -19,7 +19,7 @@ typedef struct server{
 void *net_handler(void *status);
 int create_socket(server_t *socket_fd, int timeout);
 int bind_socket(server_t *socket_fd, struct sockaddr_in *server);
+void msg_to_uint32(char *msg, uint32_t *cmd);
 
-//char IP_ADDRESS[] = "127.0.0.1";
 
 # endif

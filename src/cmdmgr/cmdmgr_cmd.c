@@ -1,14 +1,7 @@
 #include "cmdmgr_cmd.h"
 
-void msg_to_uint32(char *msg, uint32_t *cmd){
-	sscanf(msg, "%"SCNu32, cmd);
-	LOG_NET("cmd val: 0x%08X\n", *cmd);
-}
-
-OperationStatus handoff_recv_cmd(char *msg){
+OperationStatus handoff_recv_cmd(uint32_t cmd){
 	Command actual_cmd;
-	uint32_t cmd;
-	msg_to_uint32(msg, &cmd);
 	OperationStatus parse_result = parse_cmd(&actual_cmd, cmd);
 
 	if(parse_result != STATUS_OK){

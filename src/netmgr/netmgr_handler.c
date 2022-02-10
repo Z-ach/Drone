@@ -28,6 +28,7 @@ void *net_handler(void *shared_status){
     int running = 1;
     char ack_message[] = "Acknowledged.";
     char client_message[50];
+    uint32_t *cmd;
     server_t server_socket, client_socket;
     struct sockaddr_in server, client;
     struct timeval tv;
@@ -66,7 +67,8 @@ void *net_handler(void *shared_status){
         if(read_size > 0){
             client_message[read_size] = '\0';
             LOG_NET("recv: %s (%d bytes)\n", client_message, read_size);
-            stat = handoff_recv_cmd(client_message);
+            msg_to_uint32(client_message, cmd);
+            stat = handoff_recv_cmd(*cmd);
             pthread_cond_signal(status->buffer_cond);
             write(client_socket.listen_fd, ack_message, strlen(ack_message));
         } else if(read_size == 0){
@@ -90,4 +92,13 @@ void *net_handler(void *shared_status){
     close(server_socket.listen_fd);
     LOG_NET("Server shutdown successful.\n");
     return NULL;
+}
+
+void msg_to_uint32(char *msg, uint32_t *cmd){
+	sscanf(msg, "%"SCNu32, cmd);
+	LOG_NET("recv val: 0x%08X\n", *cmd);
+}
+
+void dispatch_recv_msg(uint32_t cmd){
+
 }
