@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include <ctrlmgr/ctrlmgr_state.h>
+#include <ctrlmgr/ctrlmgr_hw.h>
 #include <logmgr/logmgr.h>
 #include "cmdmgr/cmdmgr_cmd.h"
 
@@ -15,6 +16,15 @@
 typedef struct server{
     uint32_t listen_fd;
 } server_t;
+
+typedef enum {
+    NET_DISPATCH_MASK = 0xFFFF0000
+} NetMask;
+
+typedef enum{
+    RECV_BUF_SIZE = 50,
+    RESP_BUF_SIZE = 50,
+} NetBufferSizes;
 
 void *net_handler(void *status);
 int create_socket(server_t *socket_fd, int timeout);

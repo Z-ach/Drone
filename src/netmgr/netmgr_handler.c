@@ -27,8 +27,8 @@ void *net_handler(void *shared_status){
     int err, c, read_size;
     int running = 1;
     char ack_message[] = "Acknowledged.";
-    char client_message[50];
-    uint32_t *cmd;
+    char client_message[RECV_BUF_SIZE];
+	char resp_buf[RESP_BUF_SIZE];
     server_t server_socket, client_socket;
     struct sockaddr_in server, client;
     struct timeval tv;
@@ -67,10 +67,9 @@ void *net_handler(void *shared_status){
         if(read_size > 0){
             client_message[read_size] = '\0';
             LOG_NET("recv: %s (%d bytes)\n", client_message, read_size);
-            msg_to_uint32(client_message, cmd);
-            stat = handoff_recv_cmd(*cmd);
+			dispatch_recv_msg(client_message, resp_buf);
             pthread_cond_signal(status->buffer_cond);
-            write(client_socket.listen_fd, ack_message, strlen(ack_message));
+            write(client_socket.listen_fd, resp_buf, strlen(resp_buf));
         } else if(read_size == 0){
             LOG_NET("Client disconnected.\n");
             running = 0;
@@ -99,6 +98,19 @@ void msg_to_uint32(char *msg, uint32_t *cmd){
 	LOG_NET("recv val: 0x%08X\n", *cmd);
 }
 
-void dispatch_recv_msg(uint32_t cmd){
+// Send received message to proper location
+void dispatch_recv_msg(char *client_message, char *resp){
+    uint32_t *cmd;
+	uint32_t res;
+	msg_to_uint32(client_message, cmd);
 
+	res = (*cmd & NET_DISPATCH_MASK) >> 16;
+	if(res == NET_DISPATCH_MASK){
+		//This is a request for telemetry
+		get_telemetry(resp, RESP_BUF_SIZE);
+	}else{
+		handoff_recv_cmd(*cmd);
+        resp = "Command acknowledegd.";
+        resp[RESP_BUF_SIZE-1] = '\0';
+	}
 }

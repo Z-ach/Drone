@@ -32,3 +32,54 @@ void enable_leds(){
     sleep(2);
     #endif
 }
+
+void read_mpu(rc_mpu_data_t mpu_data){
+    if(rc_mpu_read_accel(&mpu_data) < 0){
+        LOG_CTRL("MPU ACCEL READ FAIL\n");
+    }
+    if(rc_mpu_read_gyro(&mpu_data) < 0){
+        LOG_CTRL("MPU GYRO READ FAIL\n");
+    }
+}
+
+void get_telemetry(char *resp_buf, int buf_size){
+    int stat;
+    Telemetry telem;
+
+    read_mpu(telem.mpu_data);
+    telem.esc_data.front_left = 0;
+    telem.esc_data.front_right = 0;
+    telem.esc_data.back_left = 0;
+    telem.esc_data.back_right = 0;
+    telem_to_resp(telem, resp_buf, buf_size);
+}
+
+void telem_to_resp(Telemetry telem, char *resp_buf, int buf_size){
+    int resp_ptr = 0;
+    int bytes_written;
+    memset(resp_buf, 0, buf_size);
+    double esc_vals[4] = {
+        telem.esc_data.front_left,
+        telem.esc_data.front_right,
+        telem.esc_data.back_left,
+        telem.esc_data.back_right
+    };
+
+    // Record accel data
+    for(int i = 0; i < 3; i++){
+        bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", telem.mpu_data.accel[i]);
+        resp_ptr += bytes_written;
+    }
+
+    // Record accel data
+    for(int i = 0; i < 3; i++){
+        bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", telem.mpu_data.gyro[i]);
+        resp_ptr += bytes_written;
+    }
+
+    // Record ESC values
+    for(int i = 0; i < 3; i++){
+        bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", esc_vals[i]);
+        resp_ptr += bytes_written;
+    }
+}

@@ -17,7 +17,7 @@ set(CMAKE_C_FLAGS -pthread)
 # The following folder will be included
 include_directories("${PROJECT_SOURCE_DIR}")
 
-configure_file(${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw.h.in ${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw.h)
+configure_file(${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw_build.h.in ${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw_build.h)
 
 if(HW_BUILD)
   #add_subdirectory(/home/debian/librobotcontrol/library/include)
@@ -33,7 +33,8 @@ add_executable(Drone
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.c
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw.c
-		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw.c
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw.h
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw_build.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_loop.c
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_loop.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_pid.c

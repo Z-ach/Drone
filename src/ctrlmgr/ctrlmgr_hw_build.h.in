@@ -1,0 +1,6 @@
+#ifndef CTRLMGR_HW_BUILD_H
+#define CTRLMGR_HW_BUILD_H
+
+#cmakedefine HW_BUILD
+
+#endif
