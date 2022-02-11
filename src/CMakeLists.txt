@@ -1,6 +1,5 @@
 cmake_minimum_required (VERSION 3.5)
-option(HW_BUILD "Use tutorial provided math implementation" OFF)
-
+option(HW_BUILD "Build for beaglebone hardware" OFF)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
@@ -27,18 +26,16 @@ if(HW_BUILD)
   #list(APPEND EXTRA_INCLUDES "/home/debian/librobotcontrol/library/include")
 endif()
 
-
-
 add_executable(Drone
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.c
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.h
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_pid.c
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_pid.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw.c
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw_build.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_loop.c
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_loop.h
-		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_pid.c
-		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_pid.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_stat.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_state.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_cmd.c

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <pthread.h>
 #include <unistd.h>
+#include <stdatomic.h>
 
 #include "ctrlmgr_hw.h"
 #include "ctrlmgr_state.h"
@@ -16,7 +17,7 @@ void ctrl_loop_run(SharedStatus *status);
 OperationStatus dispatch_cmd(SharedStatus *status);
 CommandStatus exc_takeoff(Parameters params);
 CommandStatus exc_landing(Parameters params);
-CommandStatus exc_hover(Parameters params);
+CommandStatus exc_hover(_Atomic(CommandInfo) *cmd_info, Parameters params);
 CommandStatus exc_patrol(Parameters params);
 
 #endif //DRONE_CTRLMGR_LOOP_H

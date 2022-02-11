@@ -31,7 +31,7 @@ void *net_handler(void *status);
 int create_socket(server_t *socket_fd, int timeout);
 int bind_socket(server_t *socket_fd, struct sockaddr_in *server);
 void msg_to_uint32(char *msg, uint32_t *cmd);
-void dispatch_recv_msg(char *client_message, char *resp);
+int dispatch_recv_msg(char *client_message, char *resp);
 
 
 # endif

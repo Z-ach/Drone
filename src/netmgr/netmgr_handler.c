@@ -24,7 +24,7 @@ int bind_socket(server_t *socket_fd, struct sockaddr_in *server){
 
 void *net_handler(void *shared_status){
     LOG_NET("Network handler successfully initialized.\n");
-    int err, c, read_size;
+    int err, c, read_size, sig_req;
     int running = 1;
     char ack_message[] = "Acknowledged.";
     char client_message[RECV_BUF_SIZE] = {0};
@@ -67,8 +67,10 @@ void *net_handler(void *shared_status){
         if(read_size > 0){
             client_message[read_size] = '\0';
             LOG_NET("recv: %s (%d bytes)\n", client_message, read_size);
-			dispatch_recv_msg(client_message, resp_buf);
-            pthread_cond_signal(status->buffer_cond);
+			sig_req = dispatch_recv_msg(client_message, resp_buf);
+            if(sig_req){
+                pthread_cond_signal(status->buffer_cond);
+            }
             write(client_socket.listen_fd, resp_buf, strlen(resp_buf));
         } else if(read_size == 0){
             LOG_NET("Client disconnected.\n");
@@ -99,7 +101,8 @@ void msg_to_uint32(char *msg, uint32_t *cmd){
 }
 
 // Send received message to proper location
-void dispatch_recv_msg(char *client_message, char *resp){
+int dispatch_recv_msg(char *client_message, char *resp){
+    int signal_req = 0;
     uint32_t cmd;
 	msg_to_uint32(client_message, &cmd);
 
@@ -113,5 +116,7 @@ void dispatch_recv_msg(char *client_message, char *resp){
         memset(resp, 0, RESP_BUF_SIZE);
         snprintf(resp, RESP_BUF_SIZE, "Command acknowledegd.");
         resp[RESP_BUF_SIZE-1] = '\0';
+        signal_req = 1;
 	}
+    return signal_req;
 }

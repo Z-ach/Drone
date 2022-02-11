@@ -2,6 +2,7 @@
 #define DRONE_CTRLMGR_STATE_H
 
 #include <pthread.h>
+#include <stdatomic.h>
 
 #include <cmdmgr/cmdmgr_pub.h>
 
@@ -21,9 +22,10 @@ typedef enum CommandInfo{
 typedef struct State{
     Command *current_cmd;
     Command *next_cmd;
-    CommandInfo command_info;
+    _Atomic(CommandInfo) command_info;
     RunStatus run_status;
     RunStatus netmgr_status;
+    RunStatus cmdmgr_status;
 } State;
 
 typedef struct SharedStatus{

@@ -41,6 +41,7 @@ void *cmd_handler(void *shared_status){
 				break;
 		}
 		if(status->state->run_status != RUNNING || (buf_stat == CMD_BUFFER_EMPTY && status->state->netmgr_status != RUNNING)){
+			status->state->cmdmgr_status = STOP;
 			LOG_CMD("Cmd handler service has stopped.\n");
 			pthread_mutex_unlock(status->lock);
 			return NULL;
@@ -63,6 +64,7 @@ BufferStatus update_state_from_buffer(SharedStatus *status, StateUpdateMethod up
 				return stat;
 			}
 			LOG_CMD("Buffer is empty. Waiting for signal.\n");
+			status->state->command_info = NO_COMMANDS_QUEUED;
 			pthread_cond_wait(status->buffer_cond, status->lock);
 			stat = fetch_next_cmd(next_command);
 			LOG_CMD("Buffer condition tripped, resuming.\n");
@@ -71,7 +73,7 @@ BufferStatus update_state_from_buffer(SharedStatus *status, StateUpdateMethod up
 		emergency_landing(next_command);
 	}
 
-	//free(status->state->current_cmd);
+	status->state->command_info = WAIT_FOR_FINISH;
 	status->state->next_cmd = next_command;
 	LOG_CMD("State update successful.\n");
 	LOG_CMD("\tcounter: %d\n", next_command->counter);

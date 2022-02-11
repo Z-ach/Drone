@@ -19,7 +19,9 @@ void init_shared_status(){
 	status->state->current_cmd->status = STATUS_FINISHED;
 	status->state->run_status = RUNNING;
 	status->state->netmgr_status = RUNNING;
+	status->state->cmdmgr_status = RUNNING;
 	status->state->next_cmd = NULL;
+	status->state->command_info = NO_COMMANDS_QUEUED;
 
 	status->lock = &lock;
 	status->buffer_cond = &buffer_cond;

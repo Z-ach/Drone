@@ -1,12 +1,12 @@
 #ifndef CTRLMGR_HW_BUILD_H
 #define CTRLMGR_HW_BUILD_H
 
-#cmakedefine HW_BUILD
+/* #undef HW_BUILD */
 
 // Define motor ports
 #define M_BL 0
-#define M_FL 1
-#define M_BR 2
+#define M_BR 1
+#define M_FL 2
 #define M_FR 3
 
 // Loop freq

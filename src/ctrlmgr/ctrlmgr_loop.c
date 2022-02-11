@@ -54,7 +54,7 @@ OperationStatus dispatch_cmd(SharedStatus *status){
             keep_running = 0;
             break;
         case HOVER:
-            stat = exc_hover(cur_cmd->params);
+            stat = exc_hover(&(status->state->command_info), cur_cmd->params);
             break;
         case PATROL:
             stat = exc_patrol(cur_cmd->params);
@@ -62,9 +62,13 @@ OperationStatus dispatch_cmd(SharedStatus *status){
     }
     pthread_mutex_lock(status->lock);
     cur_cmd->status = stat;
+    if(status->state->cmdmgr_status != RUNNING){
+        keep_running = 0;
+    }
     //LOG_CTRL("ctrl loop: cmd status updated to %d\n", stat);
     if(!keep_running){
         status->state->run_status = STOP;
+        handle_shutdown();
         LOG_CTRL("Ctrl loop service has stopped.\n");
         // Signal buffer just in case cmd handler is waiting on empty buf
         pthread_cond_signal(status->buffer_cond);
@@ -95,11 +99,12 @@ CommandStatus exc_landing(Parameters params){
 
 }
 
-CommandStatus exc_hover(Parameters params){
+CommandStatus exc_hover(_Atomic(CommandInfo) *cmd_info, Parameters params){
     fprintf(fp, "EXECUTING COMMAND: Hover\n");
     fprintf(fp, "\tRequested pos: %d\tMaintain flag: %d.\n", params.Hover.location, params.Hover.maintain);
     LOG_CTRL("EXECUTING COMMAND: Hover\n");
     LOG_CTRL("\tRequested pos: %d\tMaintain flag: %d.\n", params.Hover.location, params.Hover.maintain);
+    hover(cmd_info);
     //sleep(2);
     return STATUS_FINISHED;
 
