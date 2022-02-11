@@ -128,13 +128,15 @@ void telem_to_resp(Telemetry telem, char *resp_buf, int buf_size){
 void hover(_Atomic(CommandInfo) *cmd_info){
     rc_vector_zeros(&goal_gyro, 3);
     rc_vector_zeros(&goal_accel, 3);
-    kPID_t pid_vals = { 0.1, 0.0, 0.0 };
+    kPID_t pitch_pid = { 0.1, 0.0, 0.001 };
+    kPID_t roll_pid = { 0.1, 0.0, 0.001 };
+    kPID_t yaw_pid = { 0.1, 0.0, 0.001 };
     // account for g
     goal_accel.d[2] = -9.8;
     while(*cmd_info == NO_COMMANDS_QUEUED){
         read_mpu();
         LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
-        run_pid_loop(&motor_thr, pid_vals, mpu_data, goal_gyro, goal_accel);
+        run_pid_loop(&motor_thr, pitch_pid, roll_pid, yaw_pid, mpu_data, goal_gyro, goal_accel);
         LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         write_to_motors();
         rc_usleep(1000000/LOOP_HZ);
