@@ -1,6 +1,17 @@
+# Exclude .vscode settings
+.vscode/
+
+# Exclude compiled binaries
 bin/
+
+# Exclude cmake/make files in build
 build/Makefile
 build/CMakeCache.txt
 build/CMakeFiles/
 build/cmake_install.cmake
+
+# Exclude build script - this should be created by resources script
+build/beagle_armv7
+
+# Exclude test dir
 Tests/

@@ -1,5 +1,4 @@
 cmake_minimum_required (VERSION 3.5)
-option(HW_BUILD "Build for beaglebone hardware" OFF)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
@@ -10,21 +9,12 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 set(CMAKE_C_FLAGS -pthread)
-#set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
-#set (LIBRARY_OUTPUT_PATH ${EXECUTABLE_OUTPUT_PATH})
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 # The following folder will be included
 include_directories("${PROJECT_SOURCE_DIR}")
 
-#configure_file(${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw_build.h.in ${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_hw_build.h)
-
-if(HW_BUILD)
-  #add_subdirectory(/home/debian/librobotcontrol/library/include)
-  link_directories(home/debian/librobotcontrol/library/include/lib)
-  #list(APPEND EXTRA_LIBS /home/debian/librobotcontrol/library/include/lib//librobotcontrol.so.1)
-  list(APPEND EXTRA_LIBS librobotcontrol.so.1)
-  #list(APPEND EXTRA_INCLUDES "/home/debian/librobotcontrol/library/include")
-endif()
+list(APPEND EXTRA_LIBS librobotcontrol.so.1)
 
 add_executable(Drone
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.c
@@ -55,4 +45,4 @@ add_executable(Drone
 
 
 target_link_libraries(Drone ${EXTRA_LIBS})
-target_include_directories(Drone PUBLIC ${EXTRA_INCLUDES})
+#target_include_directories(Drone PUBLIC ${EXTRA_INCLUDES})
