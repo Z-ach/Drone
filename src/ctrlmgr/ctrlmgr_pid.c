@@ -1,5 +1,4 @@
 #include "ctrlmgr_pid.h"
-#ifdef HW_BUILD
 
 #define roll_ax 0
 #define pitch_ax 1
@@ -77,10 +76,10 @@ void run_pid_loop(_Atomic(rc_vector_t) *motor_thr, kPID_t roll_pid, kPID_t pitch
     // left/right side: roll components same sign
     // back/front side: pitch components same sign
     // cw/ccw corners: yaw components same sign
-    motor_thr->d[M_BR] = roll_output + pitch_output + yaw_output;
-    motor_thr->d[M_BL] = -roll_output + pitch_output - yaw_output;
-    motor_thr->d[M_FR] = roll_output - pitch_output - yaw_output;
-    motor_thr->d[M_FL] = -roll_output - pitch_output + yaw_output;
+    motor_thr->d[M_BR] = roll_output + pitch_output - yaw_output;
+    motor_thr->d[M_BL] = -roll_output + pitch_output + yaw_output;
+    motor_thr->d[M_FR] = roll_output - pitch_output + yaw_output;
+    motor_thr->d[M_FL] = -roll_output - pitch_output - yaw_output;
 
     // ensure values are not out of bounds
     for(int i = 0; i < 4; i++){
@@ -91,5 +90,3 @@ void run_pid_loop(_Atomic(rc_vector_t) *motor_thr, kPID_t roll_pid, kPID_t pitch
         }
     }
 }
-
-#endif

@@ -1,7 +1,5 @@
 #include "ctrlmgr_hw.h"
 
-#define I2C_BUS 2
-#ifdef HW_BUILD
 
 rc_mpu_data_t mpu_data;
 _Atomic(rc_vector_t) motor_thr = RC_VECTOR_INITIALIZER;
@@ -160,15 +158,3 @@ int write_to_motors(){
     stat |= rc_servo_send_esc_pulse_normalized(M_FR+1, motor_thr.d[M_FR]);
     return stat;
 }
-
-#endif
-
-#ifndef HW_BUILD
-void hover(_Atomic(CommandInfo) *cmd_info){}
-void init_hardware(){}
-void handle_shutdown(){}
-void get_telemetry(char *resp_buf, int buf_size){}
-void enable_leds(){
-    sleep(2);
-}
-#endif

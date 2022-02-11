@@ -312,6 +312,33 @@ ctrlmgr/ctrlmgr_loop.c.s:
 	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_loop.c.s
 .PHONY : ctrlmgr/ctrlmgr_loop.c.s
 
+ctrlmgr/ctrlmgr_msr.o: ctrlmgr/ctrlmgr_msr.c.o
+
+.PHONY : ctrlmgr/ctrlmgr_msr.o
+
+# target to build an object file
+ctrlmgr/ctrlmgr_msr.c.o:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_msr.c.o
+.PHONY : ctrlmgr/ctrlmgr_msr.c.o
+
+ctrlmgr/ctrlmgr_msr.i: ctrlmgr/ctrlmgr_msr.c.i
+
+.PHONY : ctrlmgr/ctrlmgr_msr.i
+
+# target to preprocess a source file
+ctrlmgr/ctrlmgr_msr.c.i:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_msr.c.i
+.PHONY : ctrlmgr/ctrlmgr_msr.c.i
+
+ctrlmgr/ctrlmgr_msr.s: ctrlmgr/ctrlmgr_msr.c.s
+
+.PHONY : ctrlmgr/ctrlmgr_msr.s
+
+# target to generate assembly for a file
+ctrlmgr/ctrlmgr_msr.c.s:
+	$(MAKE) -f CMakeFiles/Drone.dir/build.make CMakeFiles/Drone.dir/ctrlmgr/ctrlmgr_msr.c.s
+.PHONY : ctrlmgr/ctrlmgr_msr.c.s
+
 ctrlmgr/ctrlmgr_pid.o: ctrlmgr/ctrlmgr_pid.c.o
 
 .PHONY : ctrlmgr/ctrlmgr_pid.o
@@ -396,6 +423,9 @@ help:
 	@echo "... ctrlmgr/ctrlmgr_loop.o"
 	@echo "... ctrlmgr/ctrlmgr_loop.i"
 	@echo "... ctrlmgr/ctrlmgr_loop.s"
+	@echo "... ctrlmgr/ctrlmgr_msr.o"
+	@echo "... ctrlmgr/ctrlmgr_msr.i"
+	@echo "... ctrlmgr/ctrlmgr_msr.s"
 	@echo "... ctrlmgr/ctrlmgr_pid.o"
 	@echo "... ctrlmgr/ctrlmgr_pid.i"
 	@echo "... ctrlmgr/ctrlmgr_pid.s"

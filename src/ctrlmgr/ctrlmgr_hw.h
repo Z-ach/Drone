@@ -14,7 +14,6 @@
 #include "ctrlmgr_state.h"
 #include <logmgr/logmgr.h>
 
-#ifdef HW_BUILD
 #include <rc/time.h>
 #include <rc/led.h>
 #include <rc/servo.h>
@@ -33,16 +32,13 @@ typedef struct Telemetry{
     esc_vals esc_data;
 } Telemetry;
 
-void telem_to_resp(Telemetry telem, char *resp_buff, int buf_size);
-
-#endif
-
 void init_hardware();
 void handle_shutdown();
 void enable_leds();
 void read_mpu();
 void hover(_Atomic(CommandInfo) *cmd_info);
 void get_telemetry(char *resp_buf, int buf_size);
+void telem_to_resp(Telemetry telem, char *resp_buff, int buf_size);
 void set_global_throttle(double d);
 int esc_wakeup();
 int write_to_motors();

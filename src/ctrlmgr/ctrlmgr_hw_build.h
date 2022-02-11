@@ -1,8 +1,6 @@
 #ifndef CTRLMGR_HW_BUILD_H
 #define CTRLMGR_HW_BUILD_H
 
-/* #undef HW_BUILD */
-
 // Define motor ports
 #define M_BL 0
 #define M_FL 1
@@ -11,5 +9,7 @@
 
 // Loop freq
 #define LOOP_HZ 50
+
+#define I2C_BUS 2
 
 #endif
