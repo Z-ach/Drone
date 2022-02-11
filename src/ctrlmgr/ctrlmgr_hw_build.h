@@ -1,7 +1,7 @@
 #ifndef CTRLMGR_HW_BUILD_H
 #define CTRLMGR_HW_BUILD_H
 
-#define HW_BUILD
+/* #undef HW_BUILD */
 
 // Define motor ports
 #define M_BL 0
