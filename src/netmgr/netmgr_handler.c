@@ -109,7 +109,7 @@ int dispatch_recv_msg(char *client_message, char *resp){
 	if(((cmd & NET_DISPATCH_MASK) >> 16) == (NET_DISPATCH_MASK>>16)){
         LOG_NET("Request for telemetry received.\n");
 		//This is a request for telemetry
-		get_telemetry(resp, RESP_BUF_SIZE);
+		telem_to_resp(resp, RESP_BUF_SIZE);
 	}else{
         LOG_NET("Command received.\n");
 		handoff_recv_cmd(cmd);

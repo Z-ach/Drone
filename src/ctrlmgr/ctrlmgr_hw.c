@@ -1,15 +1,13 @@
 #include "ctrlmgr_hw.h"
 
-
-rc_mpu_data_t mpu_data;
 _Atomic(rc_vector_t) motor_thr = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_gyro = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_accel = RC_VECTOR_INITIALIZER;
 
-
 void handle_shutdown(){
     rc_led_cleanup();
     rc_mpu_power_off();
+    rc_bmp_power_off();
     rc_servo_cleanup();
     LOG_CTRL("Hardware shutdown successful.\n");
 }
@@ -21,13 +19,18 @@ static void __signal_handler(__attribute__ ((unused)) int dummy){
 }
 
 void init_hardware(){
+    // register interrupt handler to ensure everything shuts down properly
     signal(SIGINT, __signal_handler);
     // initialize PRU and make sure power rail is OFF
     int min_us = RC_ESC_DEFAULT_MIN_US;
     int max_us = RC_ESC_DEFAULT_MAX_US;
 
+    // ignore warning about pointer types
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
     // init throttle vector
     rc_vector_zeros(&motor_thr, 4);
+    #pragma GCC diagnostic pop
 
     // init servos
     rc_servo_init();
@@ -36,14 +39,8 @@ void init_hardware(){
     LOG_CTRL("Performing ESC wakeup\n");
     esc_wakeup();
 
-    // init mpu
-    rc_mpu_config_t conf = rc_mpu_default_config();
-    conf.i2c_bus = I2C_BUS;
-    conf.show_warnings = 0;
-    LOG_CTRL("Initialzing mpu\n");
-    if(rc_mpu_initialize(&mpu_data, conf)){
-        LOG_CTRL("MPU INIT FAIL.\n")
-    }
+    // init measurement system: mpu/bmp/dmp
+    init_msr_system();
     LOG_CTRL("Hardware init success.\n");
 }
 
@@ -73,35 +70,10 @@ void enable_leds(){
     rc_led_cleanup();
 }
 
-void read_mpu(){
-    if(rc_mpu_read_accel(&mpu_data) < 0){
-        LOG_CTRL("MPU ACCEL READ FAIL\n");
-    }else{
-        //LOG_CTRL("%f\t%f\t%f\n", mpu_data.accel[0], mpu_data.accel[1], mpu_data.accel[2]);
-    }
-    if(rc_mpu_read_gyro(&mpu_data) < 0){
-        LOG_CTRL("MPU GYRO READ FAIL\n");
-    }else{
-        //LOG_CTRL("%f\t%f\t%f\n", mpu_data.gyro[0], mpu_data.gyro[1], mpu_data.gyro[2]);
-    }
-}
-
-void get_telemetry(char *resp_buf, int buf_size){
-    int stat;
-    Telemetry *telem = malloc(sizeof(*telem));
-
-    read_mpu();
-    telem->esc_data.front_left = 0;
-    telem->esc_data.front_right = 0;
-    telem->esc_data.back_left = 0;
-    telem->esc_data.back_right = 0;
-    telem_to_resp(*telem, resp_buf, buf_size);
-    free(telem);
-}
-
-void telem_to_resp(Telemetry telem, char *resp_buf, int buf_size){
+void telem_to_resp(char *resp_buf, int buf_size){
     int resp_ptr = 0;
     int bytes_written;
+    rc_mpu_data_t mpu_data = get_mpu_data();
     memset(resp_buf, 0, buf_size);
 
     // Record accel data
@@ -124,17 +96,23 @@ void telem_to_resp(Telemetry telem, char *resp_buf, int buf_size){
 }
 
 void hover(_Atomic(CommandInfo) *cmd_info){
+    rc_mpu_data_t mpu_data = get_mpu_data();
+    double est_alt = get_est_alt();
     rc_vector_zeros(&goal_gyro, 3);
     rc_vector_zeros(&goal_accel, 3);
+    double goal_alt = 1; // set goal altitude to 1 meter
+    /*
     kPID_t pitch_pid = { 0.1, 0.0, 0.001 };
     kPID_t roll_pid = { 0.1, 0.0, 0.001 };
     kPID_t yaw_pid = { 0.1, 0.0, 0.001 };
+    */
+    kPID_t pid_vals = { 0.1, 0.0, 0.001 };
     // account for g
     goal_accel.d[2] = -9.8;
     while(*cmd_info == NO_COMMANDS_QUEUED){
-        read_mpu();
+        mpu_data = get_mpu_data();
         LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
-        run_pid_loop(&motor_thr, pitch_pid, roll_pid, yaw_pid, mpu_data, goal_gyro, goal_accel);
+        run_pid_loop(&motor_thr, pid_vals, mpu_data, est_alt, goal_gyro, goal_accel, goal_alt);
         LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         write_to_motors();
         rc_usleep(1000000/LOOP_HZ);
@@ -152,6 +130,14 @@ void set_global_throttle(double thr){
 
 int write_to_motors(){
     int stat = 0;
+    // ensure values are not out of bounds
+    for(int i = 0; i < 4; i++){
+        if(motor_thr.d[i] < 0){
+            motor_thr.d[i] = 0;
+        }else if(motor_thr.d[i] > MOTOR_THROT_MAX){
+            motor_thr.d[i] = MOTOR_THROT_MAX;
+        }
+    }
     stat |= rc_servo_send_esc_pulse_normalized(M_BL+1, motor_thr.d[M_BL]);
     stat |= rc_servo_send_esc_pulse_normalized(M_BR+1, motor_thr.d[M_BR]);
     stat |= rc_servo_send_esc_pulse_normalized(M_FL+1, motor_thr.d[M_FL]);
