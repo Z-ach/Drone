@@ -3,6 +3,7 @@
 _Atomic(rc_vector_t) motor_thr = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_gyro = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_accel = RC_VECTOR_INITIALIZER;
+const double MOTOR_THROT_MAX = 0.25;
 
 void handle_shutdown(){
     rc_led_cleanup();
@@ -74,6 +75,7 @@ void telem_to_resp(char *resp_buf, int buf_size){
     int resp_ptr = 0;
     int bytes_written;
     rc_mpu_data_t mpu_data = get_mpu_data();
+    double alt_est = get_est_alt();
     memset(resp_buf, 0, buf_size);
 
     // Record accel data
@@ -87,6 +89,10 @@ void telem_to_resp(char *resp_buf, int buf_size){
         bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", mpu_data.gyro[i]);
         resp_ptr += bytes_written;
     }
+
+    // Add altitude estimation
+    bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", alt_est);
+    resp_ptr += bytes_written;
 
     // Record ESC values
     for(int i = 0; i < 4; i++){

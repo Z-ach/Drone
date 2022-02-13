@@ -18,7 +18,6 @@ uint64_t last_time, dt;
 uint64_t timeout = 1000000000;
 double est_dt = 1/LOOP_HZ;
 double roll_output, pitch_output, yaw_output, alt_output;
-double MOTOR_THROT_MAX = 0.25;
 
 
 // Called when first starting up or after a timeout

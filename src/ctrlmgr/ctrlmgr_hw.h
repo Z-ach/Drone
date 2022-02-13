@@ -22,7 +22,7 @@
 #include <rc/math/vector.h>
 
 // limit motor output while testing
-const double MOTOR_THROT_MAX = 0.25;
+extern const double MOTOR_THROT_MAX;
 
 void init_hardware();
 void handle_shutdown();
