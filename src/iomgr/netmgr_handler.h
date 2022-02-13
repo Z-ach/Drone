@@ -10,7 +10,7 @@
 
 #include <ctrlmgr/ctrlmgr_state.h>
 #include <ctrlmgr/ctrlmgr_hw.h>
-#include <logmgr/logmgr.h>
+#include <iomgr/logmgr.h>
 #include "cmdmgr/cmdmgr_cmd.h"
 
 

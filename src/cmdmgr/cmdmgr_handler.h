@@ -6,7 +6,7 @@
 #include <pthread.h>
 
 #include <ctrlmgr/ctrlmgr_state.h>
-#include <logmgr/logmgr.h>
+#include <iomgr/logmgr.h>
 #include "cmdmgr_buffer.h"
 #include "cmdmgr_cmd.h"
 

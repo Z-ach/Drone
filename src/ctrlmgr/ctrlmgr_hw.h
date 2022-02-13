@@ -12,7 +12,7 @@
 #include "ctrlmgr_pid.h"
 #include "ctrlmgr_msr.h"
 #include "ctrlmgr_state.h"
-#include <logmgr/logmgr.h>
+#include <iomgr/logmgr.h>
 
 #include <rc/time.h>
 #include <rc/led.h>

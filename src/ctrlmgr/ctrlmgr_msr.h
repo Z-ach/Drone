@@ -12,7 +12,7 @@
 #include <rc/mpu.h>
 
 #include "ctrlmgr_hw_build.h"
-#include <logmgr/logmgr.h>
+#include <iomgr/logmgr.h>
 
 #define Nx 3
 #define Ny 1

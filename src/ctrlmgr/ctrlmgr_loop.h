@@ -11,7 +11,7 @@
 #include "ctrlmgr_stat.h"
 #include <cmdmgr/cmdmgr_pub.h>
 #include <cmdmgr/cmdmgr_cmd.h>
-#include <logmgr/logmgr.h>
+#include <iomgr/logmgr.h>
 
 void ctrl_loop_run(SharedStatus *status);
 OperationStatus dispatch_cmd(SharedStatus *status);
