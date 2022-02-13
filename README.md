@@ -25,15 +25,15 @@
     - The `resources/` directory of this repo provides an easy way to get access to the cross-compiler image
 
 
-### Work to go
+## Work to go
 
-## Hardware
+### Hardware
 
 - Securly mount board on drone frame, current mounting solution may be causing elevated noise in sensors
 - Acquire a dedicated battery to power board, or solder a new connection from the main battery
 - Configure board to run flight controller on boot
 
-## Software
+### Software
 
 - Refine control algorithm.
   - Currently using single PID controller, may need to move to cascaded configuration.
