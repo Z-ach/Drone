@@ -3,7 +3,7 @@
 _Atomic(rc_vector_t) motor_thr = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_gyro = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_accel = RC_VECTOR_INITIALIZER;
-const double MOTOR_THROT_MAX = 0.25;
+const double MOTOR_THROT_MAX = 0.325;
 
 void handle_shutdown(){
     rc_led_cleanup();
@@ -50,11 +50,11 @@ int esc_wakeup(){
     set_global_throttle(-0.1);
     // throttle requires -0.1 for wakeup
     for(int i = 0; i <= LOOP_HZ*wakeup_s_req; i++){
-        write_to_motors();
+        write_to_motors(1);
         rc_usleep(1000000/LOOP_HZ);
     }
-    set_global_throttle(0.0);
-    write_to_motors();
+    set_global_throttle(0.05);
+    write_to_motors(0);
 }
 
 void enable_leds(){
@@ -77,6 +77,14 @@ void telem_to_resp(char *resp_buf, int buf_size){
     rc_mpu_data_t mpu_data = get_mpu_data();
     double alt_est = get_est_alt();
     memset(resp_buf, 0, buf_size);
+    bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "tlm:");
+    resp_ptr += bytes_written;
+
+    // Record fused TaitBryan angle data
+    for(int i = 0; i < 3; i++){
+        bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", mpu_data.fused_TaitBryan[i]*RAD_TO_DEG);
+        resp_ptr += bytes_written;
+    }
 
     // Record accel data
     for(int i = 0; i < 3; i++){
@@ -84,7 +92,7 @@ void telem_to_resp(char *resp_buf, int buf_size){
         resp_ptr += bytes_written;
     }
 
-    // Record accel data
+    // Record gyro data
     for(int i = 0; i < 3; i++){
         bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", mpu_data.gyro[i]);
         resp_ptr += bytes_written;
@@ -106,47 +114,57 @@ void hover(_Atomic(CommandInfo) *cmd_info){
     double est_alt = get_est_alt();
     rc_vector_zeros(&goal_gyro, 3);
     rc_vector_zeros(&goal_accel, 3);
-    double goal_alt = 1; // set goal altitude to 1 meter
+    goal_gyro.d[2] = mpu_data.fused_TaitBryan[TB_YAW_Z]*RAD_TO_DEG;
+    double goal_alt = 2; // set goal altitude to 1 meter
     /*
     kPID_t pitch_pid = { 0.1, 0.0, 0.001 };
     kPID_t roll_pid = { 0.1, 0.0, 0.001 };
     kPID_t yaw_pid = { 0.1, 0.0, 0.001 };
     */
-    kPID_t pid_vals = { 0.1, 0.0, 0.001 };
+    kPID_t pid_vals = { 0.2, 0.001, 0.01 };
     // account for g
     goal_accel.d[2] = -9.8;
+    int loop_counter = 0;
+    int idx_tester = M_BL;
+    int change_on = LOOP_HZ * 4;
+    set_global_throttle(0.05);
+    motor_thr.d[idx_tester] = 0.16;
+    LOG_CTRL("set motor %d to 0.16\n", idx_tester);
     while(*cmd_info == NO_COMMANDS_QUEUED){
         mpu_data = get_mpu_data();
-        LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
+        //LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         run_pid_loop(&motor_thr, pid_vals, mpu_data, est_alt, goal_gyro, goal_accel, goal_alt);
         LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
-        write_to_motors();
+        write_to_motors(0);
+        LOG_CTRL("post write vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         rc_usleep(1000000/LOOP_HZ);
     }
 }
 
 void set_global_throttle(double thr){
-    LOG_CTRL("Global throttle set to %f\n", thr);
+    //LOG_CTRL("Global throttle set to %f\n", thr);
     motor_thr.d[M_BL] = thr;
     motor_thr.d[M_BR] = thr;
     motor_thr.d[M_FL] = thr;
     motor_thr.d[M_FR] = thr;
-    LOG_CTRL("Successfully set throttle for all motors.\n");
+    //LOG_CTRL("Successfully set throttle for all motors.\n");
 }
 
-int write_to_motors(){
+int write_to_motors(int wakeup){
     int stat = 0;
     // ensure values are not out of bounds
-    for(int i = 0; i < 4; i++){
-        if(motor_thr.d[i] < 0){
-            motor_thr.d[i] = 0;
-        }else if(motor_thr.d[i] > MOTOR_THROT_MAX){
-            motor_thr.d[i] = MOTOR_THROT_MAX;
+    if(!wakeup){
+        for(int i = 0; i < 4; i++){
+            if(motor_thr.d[i] <= 0.05){
+                motor_thr.d[i] = 0.05;
+            }else if(motor_thr.d[i] > MOTOR_THROT_MAX){
+                motor_thr.d[i] = MOTOR_THROT_MAX;
+            }
         }
     }
-    stat |= rc_servo_send_esc_pulse_normalized(M_BL+1, motor_thr.d[M_BL]);
-    stat |= rc_servo_send_esc_pulse_normalized(M_BR+1, motor_thr.d[M_BR]);
-    stat |= rc_servo_send_esc_pulse_normalized(M_FL+1, motor_thr.d[M_FL]);
-    stat |= rc_servo_send_esc_pulse_normalized(M_FR+1, motor_thr.d[M_FR]);
+    stat |= rc_servo_send_esc_pulse_normalized(M_BL+PORT_OFFSET, motor_thr.d[M_BL]);
+    stat |= rc_servo_send_esc_pulse_normalized(M_BR+PORT_OFFSET, motor_thr.d[M_BR]);
+    stat |= rc_servo_send_esc_pulse_normalized(M_FL+PORT_OFFSET, motor_thr.d[M_FL]);
+    stat |= rc_servo_send_esc_pulse_normalized(M_FR+PORT_OFFSET, motor_thr.d[M_FR]);
     return stat;
 }

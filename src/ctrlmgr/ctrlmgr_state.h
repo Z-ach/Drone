@@ -23,9 +23,9 @@ typedef struct State{
     Command *current_cmd;
     Command *next_cmd;
     _Atomic(CommandInfo) command_info;
-    RunStatus run_status;
-    RunStatus netmgr_status;
-    RunStatus cmdmgr_status;
+    _Atomic(RunStatus) run_status;
+    _Atomic(RunStatus) netmgr_status;
+    _Atomic(RunStatus) cmdmgr_status;
 } State;
 
 typedef struct SharedStatus{

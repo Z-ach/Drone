@@ -24,7 +24,7 @@ typedef enum {
 
 typedef enum{
     RECV_BUF_SIZE = 50,
-    RESP_BUF_SIZE = 100,
+    RESP_BUF_SIZE = 200,
 } NetBufferSizes;
 
 void *net_handler(void *status);

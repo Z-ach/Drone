@@ -4,10 +4,10 @@
 #cmakedefine HW_BUILD
 
 // Define motor ports
-#define M_BL 0
-#define M_FL 1
-#define M_BR 2
-#define M_FR 3
+#define M_BL 3
+#define M_FL 4
+#define M_BR 5
+#define M_FR 6
 
 // Loop freq
 #define LOOP_HZ 50

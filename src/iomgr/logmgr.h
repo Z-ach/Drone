@@ -16,6 +16,6 @@
 
 #define LOG_CMD(...) printf(ANSI_COLOR_CYAN); printf(__VA_ARGS__); printf(ANSI_COLOR_RESET);
 #define LOG_CTRL(...) printf(ANSI_COLOR_RED); printf(__VA_ARGS__); printf(ANSI_COLOR_RESET);
-#define LOG_NET(...) printf(ANSI_COLOR_YELLOW); printf(__VA_ARGS__); printf(ANSI_COLOR_RESET);
+#define LOG_IO(...) printf(ANSI_COLOR_YELLOW); printf(__VA_ARGS__); printf(ANSI_COLOR_RESET);
 
 #endif

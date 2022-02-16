@@ -11,6 +11,7 @@
 #include "ctrlmgr_msr.h"
 
 static int running = 0;
+static double initial_bias = 0;
 static rc_mpu_data_t mpu_data;
 static rc_bmp_data_t bmp_data;
 static rc_kalman_t kf = RC_KALMAN_INITIALIZER;
@@ -25,7 +26,12 @@ rc_mpu_data_t get_mpu_data(){
 
 double get_est_alt(){
     // 0th deg kalman filter predict for altitude (meters)
-    return kf.x_est.d[0];
+    if(initial_bias == 0){
+        initial_bias = kf.x_est.d[0];
+    }else if(kf.x_est.d[0] - initial_bias < 0){
+        initial_bias = kf.x_est.d[0];
+    }
+    return kf.x_est.d[0] - initial_bias;
 }
 
 static void __dmp_handler(void){
@@ -152,12 +158,13 @@ int init_msr_system(){
     mpu_conf = rc_mpu_default_config();
     mpu_conf.dmp_sample_rate = SAMPLE_RATE;
     mpu_conf.dmp_fetch_accel_gyro = 1;
+    mpu_conf.enable_magnetometer = 1;
     if(rc_mpu_initialize_dmp(&mpu_data, mpu_conf)){
         return -1;
     }
 
     // Wait for dmp to settle then start filter callback
-    LOG_CTRL("Waiting for sensors to settle");
+    LOG_CTRL("Waiting for sensors to settle\n");
     rc_usleep(3000000);
     rc_mpu_set_dmp_callback(__dmp_handler);
 
@@ -171,6 +178,7 @@ int init_msr_system(){
     printf(" alt (bmp) |");
     printf(" vert_accel |");
     printf("\n");
+    //initial_bias = kf.x_est.d[0];
     //now just wait, print_data will run
     while(running){
         rc_usleep(1000000/PRINT_HZ);

@@ -8,14 +8,14 @@ OperationStatus handoff_recv_cmd(uint32_t cmd){
 		return parse_result;
 	}
 
-	LOG_NET("Attempting to insert into buffer\n");
+	LOG_IO("Attempting to insert into buffer\n");
 	BufferStatus stat = insert_into_cmd_buf(actual_cmd);
 
 	if(stat == CMD_BUFFER_OK){
-		LOG_NET("Success!\n");
+		LOG_IO("Success!\n");
 	}
 	else{
-		LOG_NET("BUFFER FULL\n");
+		LOG_IO("BUFFER FULL\n");
 	}
 
 	return (stat == CMD_BUFFER_OK) ? STATUS_OK : STATUS_FAIL;
@@ -30,7 +30,7 @@ OperationStatus parse_cmd(Command *actual_cmd, uint32_t raw_cmd){
 	//First, validate CRC8
 	if(crc8(raw_cmd) != STATUS_OK){
 		//Bad crc8, something went wrong in transmission
-		LOG_NET("CRC8 validation failed. Could not process command\n");
+		LOG_IO("CRC8 validation failed. Could not process command\n");
 		return STATUS_FAIL;
 	}
 
@@ -44,23 +44,23 @@ OperationStatus parse_cmd(Command *actual_cmd, uint32_t raw_cmd){
 	switch(mode){
 		case TAKE_OFF:
 			actual_cmd->params.TakeOff.altitude = params >> 8;
-			LOG_NET("Registered cmd as TAKEOFF\n\tParams:\t0x%04X\n", params);
-			LOG_NET("\tProceeding to altitude: %d inches\n", actual_cmd->params.TakeOff.altitude );
+			LOG_IO("Registered cmd as TAKEOFF\n\tParams:\t0x%04X\n", params);
+			LOG_IO("\tProceeding to altitude: %d inches\n", actual_cmd->params.TakeOff.altitude );
 			break;
 		case LAND:
 			actual_cmd->params.Land.emergency = params & PARAM_EMER_MASK;
 			actual_cmd->params.Land.location = (params & PARAM_LOC_MASK) >> 8;
-			LOG_NET("Registered cmd as LAND\n\tParams:\t0x%04X\n", params);
-			LOG_NET("\tEmergency flag: %d\tLanding location: %d\n", actual_cmd->params.Land.emergency, actual_cmd->params.Land.location);
+			LOG_IO("Registered cmd as LAND\n\tParams:\t0x%04X\n", params);
+			LOG_IO("\tEmergency flag: %d\tLanding location: %d\n", actual_cmd->params.Land.emergency, actual_cmd->params.Land.location);
 			//ensure that it is not an emergency landing request
 			break;
 		case HOVER:
 			//process
-			LOG_NET("Registered cmd as HOVER\n\tParams:\t0x%04X\n", params);
+			LOG_IO("Registered cmd as HOVER\n\tParams:\t0x%04X\n", params);
 			break;
 		case PATROL:
 			//unimplemented
-			LOG_NET("Registered cmd as PATROL\n\tParams:\t0x%04X\n", params);
+			LOG_IO("Registered cmd as PATROL\n\tParams:\t0x%04X\n", params);
 			break;
 		default:
 			//No valid mode sent

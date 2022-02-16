@@ -1,7 +1,7 @@
 #include "ctrlmgr_pid.h"
 
-#define roll_ax 0
-#define pitch_ax 1
+#define roll_ax 1
+#define pitch_ax 0
 #define yaw_ax 2
 
 rc_vector_t acc_err = RC_VECTOR_INITIALIZER;
@@ -51,7 +51,7 @@ void run_pid_loop(_Atomic(rc_vector_t) *motor_thr, kPID_t pid_v, rc_mpu_data_t m
     sum_alt_err += alt_err * est_dt;
     for(int i = 0; i < 3; i++){
         acc_err.d[i] = mpu_data.accel[i] - goal_accel.d[i];
-        gyro_err.d[i] = mpu_data.gyro[i] - goal_gyro.d[i];
+        gyro_err.d[i] = (mpu_data.fused_TaitBryan[i]*RAD_TO_DEG) - goal_gyro.d[i];
         // add to accumulators
         sum_acc_err.d[i] += acc_err.d[i] * est_dt;
         sum_acc_err.d[i] += acc_err.d[i] * est_dt;
@@ -76,15 +76,16 @@ void run_pid_loop(_Atomic(rc_vector_t) *motor_thr, kPID_t pid_v, rc_mpu_data_t m
         last_gyro_err.d[i] = gyro_err.d[i];
     }
 
-    roll_output  = (pid_v.kP * gyro_err.d[roll_ax]) + (pid_v.kI * sum_gyro_err.d[roll_ax]) + (pid_v.kD * delta_gyro_err.d[roll_ax]);
-    pitch_output = (pid_v.kP * gyro_err.d[pitch_ax]) + (pid_v.kI * sum_gyro_err.d[pitch_ax]) + (pid_v.kD * delta_gyro_err.d[pitch_ax]);
-    yaw_output   = (pid_v.kP * gyro_err.d[yaw_ax]) + (pid_v.kI * sum_gyro_err.d[yaw_ax]) + (pid_v.kD * delta_gyro_err.d[yaw_ax]);
-    alt_output   = (pid_v.kP * alt_err) + (pid_v.kI * sum_alt_err) + (pid_v.kD * delta_alt_err);
+    roll_output  = -0.25*((pid_v.kP * gyro_err.d[roll_ax]) + (pid_v.kI * sum_gyro_err.d[roll_ax]) + (pid_v.kD * delta_gyro_err.d[roll_ax]));
+    pitch_output = 0.25*((pid_v.kP * gyro_err.d[pitch_ax]) + (pid_v.kI * sum_gyro_err.d[pitch_ax]) + (pid_v.kD * delta_gyro_err.d[pitch_ax]));
+    yaw_output   = 0.1*((pid_v.kP * gyro_err.d[yaw_ax]) + (pid_v.kI * sum_gyro_err.d[yaw_ax]) + (pid_v.kD * delta_gyro_err.d[yaw_ax]));
+    alt_output   = 1*((pid_v.kP * alt_err) + (pid_v.kI * sum_alt_err) + (pid_v.kD * delta_alt_err));
     /*
     roll_output  = (roll_pid.kP * gyro_err.d[roll_ax]) + (roll_pid.kI * sum_gyro_err.d[roll_ax]) + (roll_pid.kD * delta_gyro_err.d[roll_ax]);
     pitch_output = (pitch_pid.kP * gyro_err.d[pitch_ax]) + (pitch_pid.kI * sum_gyro_err.d[pitch_ax]) + (pitch_pid.kD * delta_gyro_err.d[pitch_ax]);
     yaw_output   = (yaw_pid.kP * gyro_err.d[yaw_ax]) + (yaw_pid.kI * sum_gyro_err.d[yaw_ax]) + (yaw_pid.kD * delta_gyro_err.d[yaw_ax]);
     */
+    LOG_CTRL("\t\t\t\t\t\troll: %3.2f pitch: %3.2f yaw: %3.2f alt: %3.2f\n", roll_output, pitch_output, yaw_output, alt_output);
 
     // left/right side: roll components same sign
     // back/front side: pitch components same sign

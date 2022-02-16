@@ -41,6 +41,10 @@ add_executable(Drone
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_pub.h
 		${PROJECT_SOURCE_DIR}/iomgr/netmgr_handler.c
 		${PROJECT_SOURCE_DIR}/iomgr/netmgr_handler.h
+		${PROJECT_SOURCE_DIR}/iomgr/serializer.c
+		${PROJECT_SOURCE_DIR}/iomgr/serializer.h
+		${PROJECT_SOURCE_DIR}/iomgr/confmgr.c
+		${PROJECT_SOURCE_DIR}/iomgr/confmgr.h
 		${PROJECT_SOURCE_DIR}/iomgr/logmgr.h)
 
 
