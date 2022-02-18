@@ -62,6 +62,9 @@ OperationStatus parse_cmd(Command *actual_cmd, uint32_t raw_cmd){
 			//unimplemented
 			LOG_IO("Registered cmd as PATROL\n\tParams:\t0x%04X\n", params);
 			break;
+		case IDLE:
+			LOG_IO("Registered cmd as IDLE\n\tParams:\t0x%04X\n", params);
+			break;
 		default:
 			//No valid mode sent
 			fprintf(stderr, "INVALID COMMAND MODE DETECTED\n");
@@ -97,6 +100,8 @@ const char *get_cmd_mode_name(CommandMode mode){
 			return "HOVER";
 		case PATROL:
 			return "PATROL";
+		case IDLE:
+			return "IDLE";
 	}
 }
 

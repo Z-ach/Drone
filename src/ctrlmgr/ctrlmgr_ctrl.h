@@ -14,6 +14,7 @@
 #include <cmdmgr/cmdmgr_buffer.h>
 #include <iomgr/netmgr_handler.h>
 #include <iomgr/logmgr.h>
+#include <iomgr/confmgr.h>
 
 
 /*	Functions				*/

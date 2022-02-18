@@ -46,6 +46,9 @@ OperationStatus dispatch_cmd(SharedStatus *status){
         case NO_OP:
             stat = STATUS_FINISHED;
             break;
+        case IDLE:
+            stat = exc_idle(&(status->state->command_info), cur_cmd->params);
+            break;
         case TAKE_OFF:
             stat = exc_takeoff(cur_cmd->params);
             break;
@@ -77,6 +80,12 @@ OperationStatus dispatch_cmd(SharedStatus *status){
     pthread_mutex_unlock(status->lock);
 
     return (stat == STATUS_FINISHED) ? STATUS_OK : STATUS_FAIL;
+}
+
+CommandStatus exc_idle(_Atomic(CommandInfo) *cmd_info, Parameters params){
+    fprintf(fp, "EXECUTING COMMAND: Idle\n");
+    idle(cmd_info);
+    return STATUS_FINISHED;
 }
 
 CommandStatus exc_takeoff(Parameters params){

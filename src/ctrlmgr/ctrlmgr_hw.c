@@ -3,7 +3,8 @@
 _Atomic(rc_vector_t) motor_thr = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_gyro = RC_VECTOR_INITIALIZER;
 rc_vector_t goal_accel = RC_VECTOR_INITIALIZER;
-const double MOTOR_THROT_MAX = 0.325;
+const double MOTOR_THROT_MAX = 0.55;
+config_t config;
 
 void handle_shutdown(){
     rc_led_cleanup();
@@ -19,6 +20,10 @@ static void __signal_handler(__attribute__ ((unused)) int dummy){
     exit(0);
 }
 
+void update_config(config_t new_config){
+    config = new_config;
+}
+
 void init_hardware(){
     // register interrupt handler to ensure everything shuts down properly
     signal(SIGINT, __signal_handler);
@@ -32,6 +37,8 @@ void init_hardware(){
     // init throttle vector
     rc_vector_zeros(&motor_thr, 4);
     #pragma GCC diagnostic pop
+    rc_vector_zeros(&goal_gyro, 3);
+    rc_vector_zeros(&goal_accel, 3);
 
     // init servos
     rc_servo_init();
@@ -43,6 +50,7 @@ void init_hardware(){
     // init measurement system: mpu/bmp/dmp
     init_msr_system();
     LOG_CTRL("Hardware init success.\n");
+    goal_gyro.d[2] = get_mpu_data().fused_TaitBryan[2] * RAD_TO_DEG;
 }
 
 int esc_wakeup(){
@@ -80,11 +88,17 @@ void telem_to_resp(char *resp_buf, int buf_size){
     bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "tlm:");
     resp_ptr += bytes_written;
 
-    // Record fused TaitBryan angle data
-    for(int i = 0; i < 3; i++){
+    // Record fused TaitBryan angle data for roll & pitch
+    for(int i = 0; i < 2; i++){
         bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", mpu_data.fused_TaitBryan[i]*RAD_TO_DEG);
         resp_ptr += bytes_written;
     }
+
+    // Account for yaw error
+    double yaw_err = (mpu_data.fused_TaitBryan[2] * RAD_TO_DEG) - goal_gyro.d[2];
+    bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", yaw_err);
+    resp_ptr += bytes_written;
+
 
     // Record accel data
     for(int i = 0; i < 3; i++){
@@ -115,13 +129,15 @@ void hover(_Atomic(CommandInfo) *cmd_info){
     rc_vector_zeros(&goal_gyro, 3);
     rc_vector_zeros(&goal_accel, 3);
     goal_gyro.d[2] = mpu_data.fused_TaitBryan[TB_YAW_Z]*RAD_TO_DEG;
+    double thr = config.base_thr;
     double goal_alt = 2; // set goal altitude to 1 meter
     /*
     kPID_t pitch_pid = { 0.1, 0.0, 0.001 };
     kPID_t roll_pid = { 0.1, 0.0, 0.001 };
     kPID_t yaw_pid = { 0.1, 0.0, 0.001 };
     */
-    kPID_t pid_vals = { 0.2, 0.001, 0.01 };
+    //kPID_t pid_vals = { 0.2, 0.001, 0.01 };
+    kPID_t pid_vals = config.pid_vals;
     // account for g
     goal_accel.d[2] = -9.8;
     int loop_counter = 0;
@@ -133,12 +149,26 @@ void hover(_Atomic(CommandInfo) *cmd_info){
     while(*cmd_info == NO_COMMANDS_QUEUED){
         mpu_data = get_mpu_data();
         //LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
-        run_pid_loop(&motor_thr, pid_vals, mpu_data, est_alt, goal_gyro, goal_accel, goal_alt);
-        LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
+        run_pid_loop(&motor_thr, pid_vals, mpu_data, goal_gyro, goal_accel, thr);
+        //LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         write_to_motors(0);
-        LOG_CTRL("post write vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
+        //LOG_CTRL("post write vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         rc_usleep(1000000/LOOP_HZ);
     }
+}
+
+void idle(_Atomic(CommandInfo) *cmd_info){
+    int min_timeout = 3 * LOOP_HZ;
+    int counter = 0;
+    LOG_CTRL("Executing idle command.\n");
+    while(*cmd_info == NO_COMMANDS_QUEUED || counter < min_timeout){
+        set_global_throttle(0.05);
+        rc_usleep(1000000/LOOP_HZ);
+        if (counter < min_timeout){
+            counter++;
+        }
+    }
+    LOG_CTRL("Idle command finished.\n");
 }
 
 void set_global_throttle(double thr){

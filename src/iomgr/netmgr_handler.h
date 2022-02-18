@@ -19,7 +19,13 @@ typedef struct server{
 } server_t;
 
 typedef enum {
-    NET_DISPATCH_MASK = (uint32_t)0xFFFF0000
+    NET_READ_CFG_MASK   = (uint32_t)0xFFF00000,
+    NET_SET_KP_MASK     = (uint32_t)0xFFF10000,
+    NET_SET_KI_MASK     = (uint32_t)0xFFF20000,
+    NET_SET_KD_MASK     = (uint32_t)0xFFF30000,
+    NET_SET_THR_MASK    = (uint32_t)0xFFF40000,
+    NET_TELEM_MASK      = (uint32_t)0xFFFF0000,
+    NET_CFG_VAL_MASK    = (uint32_t)0x0000FFFF
 } NetMask;
 
 typedef enum{
@@ -32,6 +38,8 @@ int create_socket(server_t *socket_fd, int timeout);
 int bind_socket(server_t *socket_fd, struct sockaddr_in *server);
 void msg_to_uint32(char *msg, uint32_t *cmd);
 int dispatch_recv_msg(char *client_message, char *resp);
+int check_mask(uint32_t cmd, uint32_t mask, int shift);
+double determine_cfg_req(uint32_t cmd);
 
 
 # endif

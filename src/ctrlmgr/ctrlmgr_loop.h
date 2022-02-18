@@ -18,6 +18,7 @@ OperationStatus dispatch_cmd(SharedStatus *status);
 CommandStatus exc_takeoff(Parameters params);
 CommandStatus exc_landing(Parameters params);
 CommandStatus exc_hover(_Atomic(CommandInfo) *cmd_info, Parameters params);
+CommandStatus exc_idle(_Atomic(CommandInfo) *cmd_info, Parameters params);
 CommandStatus exc_patrol(Parameters params);
 
 #endif //DRONE_CTRLMGR_LOOP_H

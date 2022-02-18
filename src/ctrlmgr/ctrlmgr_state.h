@@ -5,6 +5,7 @@
 #include <stdatomic.h>
 
 #include <cmdmgr/cmdmgr_pub.h>
+#include <iomgr/confmgr.h>
 
 
 /*	State Information		*/
@@ -30,6 +31,7 @@ typedef struct State{
 
 typedef struct SharedStatus{
     State *state;
+    config_t config;
     pthread_mutex_t *lock;
     pthread_cond_t *buffer_cond;
     pthread_cond_t *command_cond;

@@ -10,7 +10,8 @@ typedef enum {
     TAKE_OFF	=	0x01,
     LAND		=	0x02,
     HOVER		=	0x03,
-    PATROL		=	0x04
+    PATROL		=	0x04,
+    IDLE		=	0x05
 } CommandMode;
 
 /*	Parameters		*/

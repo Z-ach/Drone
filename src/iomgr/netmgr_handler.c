@@ -103,17 +103,41 @@ void msg_to_uint32(char *msg, uint32_t *cmd){
 	LOG_IO("cvt msg %s to val: 0x%08X\n", msg, *cmd);
 }
 
+int check_mask(uint32_t cmd, uint32_t mask, int shift){
+    return (cmd & mask) >> shift == (mask >> shift);
+}
+
+double determine_cfg_req(uint32_t cmd){
+    // figure out the new value to set within the cfg
+    uint32_t raw_val = (cmd & NET_CFG_VAL_MASK);
+    return (double)raw_val;
+}
+
 // Send received message to proper location
 int dispatch_recv_msg(char *client_message, char *resp){
     int signal_req = 0;
     uint32_t cmd;
 	msg_to_uint32(client_message, &cmd);
 
-	if(((cmd & NET_DISPATCH_MASK) >> 16) == (NET_DISPATCH_MASK>>16)){
+    if(check_mask(cmd, NET_TELEM_MASK, 16)){
         LOG_IO("Request for telemetry received.\n");
-		//This is a request for telemetry
 		telem_to_resp(resp, RESP_BUF_SIZE);
-	}else{
+	}else if(check_mask(cmd, NET_READ_CFG_MASK, 16)){
+        LOG_IO("Request for config received.\n");
+		cfg_to_resp(resp, RESP_BUF_SIZE);
+	}else if(check_mask(cmd, NET_SET_THR_MASK, 16)){
+        LOG_IO("Request for thr update received.\n");
+        update_cfg_from_net(thr, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_KD_MASK, 16)){
+        LOG_IO("Request for kD update received.\n");
+        update_cfg_from_net(kD, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_KI_MASK, 16)){
+        LOG_IO("Request for kI update received.\n");
+        update_cfg_from_net(kI, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_KP_MASK, 16)){
+        LOG_IO("Request for kP update received.\n");
+        update_cfg_from_net(kP, determine_cfg_req(cmd));
+    }else{
         LOG_IO("Command received.\n");
 		handoff_recv_cmd(cmd);
         memset(resp, 0, RESP_BUF_SIZE);

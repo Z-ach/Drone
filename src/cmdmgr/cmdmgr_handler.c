@@ -5,7 +5,7 @@ void *cmd_handler(void *shared_status){
     LOG_CMD("Command handler successfully initialized.\n");
 	SharedStatus *status = shared_status;
 	BufferStatus buf_stat = CMD_BUFFER_OK;
-	LOG_CMD("Found initial command: %d\n", status->state->current_cmd->status);
+	LOG_CMD("Found initial command: %d\n", get_cmd_mode_name(status->state->current_cmd->mode));
 
 	while(1){
 		pthread_mutex_lock(status->lock);

@@ -15,14 +15,15 @@ void init_shared_status(){
 	status->state = malloc(sizeof(*status->state));
 	status->state->current_cmd = malloc(sizeof(*status->state->current_cmd));
 	status->state->current_cmd->counter = 0;
-	status->state->current_cmd->mode = NO_OP;
-	status->state->current_cmd->status = STATUS_FINISHED;
+	status->state->current_cmd->mode = IDLE;
+	status->state->current_cmd->status = STATUS_WAITING;
 	status->state->run_status = RUNNING;
 	status->state->netmgr_status = RUNNING;
 	status->state->cmdmgr_status = RUNNING;
 	status->state->next_cmd = NULL;
 	status->state->command_info = NO_COMMANDS_QUEUED;
 
+	status->config = get_config();
 	status->lock = &lock;
 	status->buffer_cond = &buffer_cond;
 	status->command_cond = &command_cond;
