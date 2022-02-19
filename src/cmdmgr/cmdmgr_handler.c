@@ -68,6 +68,11 @@ BufferStatus update_state_from_buffer(SharedStatus *status, StateUpdateMethod up
 			pthread_cond_wait(status->buffer_cond, status->lock);
 			stat = fetch_next_cmd(next_command);
 			LOG_CMD("Buffer condition tripped, resuming.\n");
+			// Check again after resuming just to make sure still running
+			if(status->state->netmgr_status != RUNNING && stat == CMD_BUFFER_EMPTY){
+				status->state->command_info = PREEMPT_REQUESTED;
+				return stat;
+			}
 		}
 	} else{
 		emergency_landing(next_command);

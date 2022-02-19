@@ -79,7 +79,7 @@ void enable_leds(){
     rc_led_cleanup();
 }
 
-void telem_to_resp(char *resp_buf, int buf_size){
+int telem_to_resp(char *resp_buf, int buf_size){
     int resp_ptr = 0;
     int bytes_written;
     rc_mpu_data_t mpu_data = get_mpu_data();
@@ -121,6 +121,7 @@ void telem_to_resp(char *resp_buf, int buf_size){
         bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", motor_thr.d[i]);
         resp_ptr += bytes_written;
     }
+    return resp_ptr;
 }
 
 void hover(_Atomic(CommandInfo) *cmd_info){

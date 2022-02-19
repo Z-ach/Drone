@@ -2,6 +2,7 @@
 #define NETMGR_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 #include <sys/socket.h>
@@ -29,8 +30,8 @@ typedef enum {
 } NetMask;
 
 typedef enum{
-    RECV_BUF_SIZE = 50,
-    RESP_BUF_SIZE = 200,
+    RECV_BUF_SIZE = 2048,
+    RESP_BUF_SIZE = 2048,
 } NetBufferSizes;
 
 void *net_handler(void *status);

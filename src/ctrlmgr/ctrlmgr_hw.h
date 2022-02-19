@@ -32,7 +32,7 @@ void enable_leds();
 void read_mpu();
 void hover(_Atomic(CommandInfo) *cmd_info);
 void idle(_Atomic(CommandInfo) *cmd_info);
-void telem_to_resp(char *resp_buff, int buf_size);
+int telem_to_resp(char *resp_buff, int buf_size);
 void set_global_throttle(double d);
 int esc_wakeup();
 int write_to_motors(int wakeup);

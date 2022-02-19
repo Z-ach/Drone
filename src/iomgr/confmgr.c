@@ -83,7 +83,7 @@ void update_cfg_from_net(cfg_t type, double val){
 }
 
 
-void cfg_to_resp(char *resp_buf, int buf_size){
+int cfg_to_resp(char *resp_buf, int buf_size){
     int resp_ptr = 0;
     int bytes_written;
     memset(resp_buf, 0, buf_size);
@@ -93,6 +93,7 @@ void cfg_to_resp(char *resp_buf, int buf_size){
     // Write values stored in cfg to buffer
     bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,%3.4f,%3.4f,%3.4f", config->pid_vals.kP, config->pid_vals.kI, config->pid_vals.kD, config->base_thr );
     resp_ptr += bytes_written;
+    return resp_ptr;
 }
 
 

@@ -24,8 +24,9 @@ int bind_socket(server_t *socket_fd, struct sockaddr_in *server){
 
 void *net_handler(void *shared_status){
     LOG_IO("Network handler successfully initialized.\n");
-    int err, c, read_size, sig_req;
+    int err, c, read_size, sig_req, new_read;
     int running = 1;
+    int expected_read = 8;
     char ack_message[] = "Acknowledged.";
     char client_message[RECV_BUF_SIZE] = {0};
 	char resp_buf[RESP_BUF_SIZE] = {0};
@@ -61,25 +62,37 @@ void *net_handler(void *shared_status){
     setsockopt(client_socket.listen_fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
     LOG_IO("Connection accepted.\n");
     while(running){
+        memset(client_message, 0, 16);
+        read_size = recv(client_socket.listen_fd, client_message, expected_read, 0);
+        while(read_size > 0 && read_size < expected_read){
+            LOG_IO("recv: %.*s (%d bytes) - less than required read. waiting for rest of message.\n", read_size, client_message, read_size);
+            new_read = recv(client_socket.listen_fd, client_message+read_size, expected_read-read_size, 0);
+            // catch disconnect / error while waiting for rest of message
+            if(new_read <= 0){
+                read_size = new_read;
+                break;
+            }
+            read_size += new_read;
+        }
 
-        read_size = recv(client_socket.listen_fd, client_message, 2000, 0);
         if(read_size <= 10 && read_size > 0){
             client_message[read_size] = '\0';
             LOG_IO("recv: %s (%d bytes)\n", client_message, read_size);
             pthread_mutex_lock(status->lock);
 			sig_req = dispatch_recv_msg(client_message, resp_buf);
             if(sig_req){
+                LOG_IO("Tripping buffer, sig_req was %d.\n", sig_req);
                 pthread_cond_signal(status->buffer_cond);
             }
             pthread_mutex_unlock(status->lock);
             write(client_socket.listen_fd, resp_buf, strlen(resp_buf));
         } else if(read_size > 10){
-            LOG_IO("Received more than 10 bytes, ignoring message.\n");
+            LOG_IO("Received more than 8 bytes, ignoring message. (Got %d bytes).\n", read_size);
         } else if(read_size == 0){
             LOG_IO("Client disconnected.\n");
             running = 0;
         } else if(read_size < 0){
-            LOG_IO("Timeout exceeded.\n");
+            LOG_IO("Client disconnected or timeout exceeded.\n");
             running = 0;
         }
 
@@ -87,9 +100,12 @@ void *net_handler(void *shared_status){
             running = 0;
         }
         if(!running){
-            //pthread_mutex_lock(status->lock);
+            pthread_mutex_lock(status->lock);
+            // signal command manager to indicate no more commands will be queued
+            // that way, if buf is empty, cmd mgr can end
             status->state->netmgr_status = STOP;
-            //pthread_mutex_unlock(status->lock);
+            pthread_cond_signal(status->buffer_cond);
+            pthread_mutex_unlock(status->lock);
             break;
         }
     }
@@ -99,7 +115,7 @@ void *net_handler(void *shared_status){
 }
 
 void msg_to_uint32(char *msg, uint32_t *cmd){
-	sscanf(msg, "%"SCNu32, cmd);
+	sscanf(msg, "%08X", cmd);
 	LOG_IO("cvt msg %s to val: 0x%08X\n", msg, *cmd);
 }
 
@@ -115,16 +131,15 @@ double determine_cfg_req(uint32_t cmd){
 
 // Send received message to proper location
 int dispatch_recv_msg(char *client_message, char *resp){
+    OperationStatus stat;
     int signal_req = 0;
+    int write_len = 0;
     uint32_t cmd;
 	msg_to_uint32(client_message, &cmd);
 
     if(check_mask(cmd, NET_TELEM_MASK, 16)){
         LOG_IO("Request for telemetry received.\n");
-		telem_to_resp(resp, RESP_BUF_SIZE);
-	}else if(check_mask(cmd, NET_READ_CFG_MASK, 16)){
-        LOG_IO("Request for config received.\n");
-		cfg_to_resp(resp, RESP_BUF_SIZE);
+		write_len = telem_to_resp(resp, RESP_BUF_SIZE);
 	}else if(check_mask(cmd, NET_SET_THR_MASK, 16)){
         LOG_IO("Request for thr update received.\n");
         update_cfg_from_net(thr, determine_cfg_req(cmd));
@@ -137,13 +152,22 @@ int dispatch_recv_msg(char *client_message, char *resp){
 	}else if(check_mask(cmd, NET_SET_KP_MASK, 16)){
         LOG_IO("Request for kP update received.\n");
         update_cfg_from_net(kP, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_READ_CFG_MASK, 16)){
+        LOG_IO("Request for config received.\n");
+		write_len = cfg_to_resp(resp, RESP_BUF_SIZE);
     }else{
         LOG_IO("Command received.\n");
-		handoff_recv_cmd(cmd);
+		stat = handoff_recv_cmd(cmd);
         memset(resp, 0, RESP_BUF_SIZE);
-        snprintf(resp, RESP_BUF_SIZE, "cmd:Command acknowledegd.");
-        resp[RESP_BUF_SIZE-1] = '\0';
-        signal_req = 1;
+        write_len = snprintf(resp, RESP_BUF_SIZE, "cmd:Command acknowledged.");
+        if(stat == STATUS_OK){
+            signal_req = 1;
+        }
 	}
+    if(write_len > 0){
+        // add delimiter for easy processing
+        resp[write_len] = ';';
+    }
+    resp[RESP_BUF_SIZE-1] = '\0';
     return signal_req;
 }
