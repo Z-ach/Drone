@@ -140,21 +140,39 @@ int dispatch_recv_msg(char *client_message, char *resp){
     if(check_mask(cmd, NET_TELEM_MASK, 16)){
         LOG_IO("Request for telemetry received.\n");
 		write_len = telem_to_resp(resp, RESP_BUF_SIZE);
-	}else if(check_mask(cmd, NET_SET_THR_MASK, 16)){
-        LOG_IO("Request for thr update received.\n");
-        update_cfg_from_net(thr, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_KD_MASK, 16)){
+	}else if(check_mask(cmd, NET_SET_YAW_KD_MASK, 16)){
         LOG_IO("Request for kD update received.\n");
-        update_cfg_from_net(kD, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_KI_MASK, 16)){
+        update_cfg_from_net(yaw_kD, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_YAW_KI_MASK, 16)){
         LOG_IO("Request for kI update received.\n");
-        update_cfg_from_net(kI, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_KP_MASK, 16)){
+        update_cfg_from_net(yaw_kI, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_YAW_KP_MASK, 16)){
         LOG_IO("Request for kP update received.\n");
-        update_cfg_from_net(kP, determine_cfg_req(cmd));
+        update_cfg_from_net(yaw_kP, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_PITCH_KD_MASK, 16)){
+        LOG_IO("Request for kD update received.\n");
+        update_cfg_from_net(pitch_kD, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_PITCH_KI_MASK, 16)){
+        LOG_IO("Request for kI update received.\n");
+        update_cfg_from_net(pitch_kI, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_PITCH_KP_MASK, 16)){
+        LOG_IO("Request for kP update received.\n");
+        update_cfg_from_net(pitch_kP, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_ROLL_KD_MASK, 16)){
+        LOG_IO("Request for kD update received.\n");
+        update_cfg_from_net(roll_kD, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_ROLL_KI_MASK, 16)){
+        LOG_IO("Request for kI update received.\n");
+        update_cfg_from_net(roll_kI, determine_cfg_req(cmd));
+	}else if(check_mask(cmd, NET_SET_ROLL_KP_MASK, 16)){
+        LOG_IO("Request for kP update received.\n");
+        update_cfg_from_net(roll_kP, determine_cfg_req(cmd));
 	}else if(check_mask(cmd, NET_READ_CFG_MASK, 16)){
         LOG_IO("Request for config received.\n");
 		write_len = cfg_to_resp(resp, RESP_BUF_SIZE);
+	}else if(check_mask(cmd, NET_SET_THR_MASK, 16)){
+        LOG_IO("Request for thr update received.\n");
+        update_cfg_from_net(thr, determine_cfg_req(cmd));
     }else{
         LOG_IO("Command received.\n");
 		stat = handoff_recv_cmd(cmd);

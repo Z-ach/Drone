@@ -142,14 +142,14 @@ void hover(_Atomic(CommandInfo) *cmd_info){
     kPID_t yaw_pid = { 0.1, 0.0, 0.001 };
     */
     //kPID_t pid_vals = { 0.2, 0.001, 0.01 };
-    kPID_t pid_vals = config.pid_vals;
+    PIDContainer pid_container = config.pid_container;
     // account for g
     goal_accel.d[2] = -9.8;
     set_global_throttle(0.05);
     while(*cmd_info == NO_COMMANDS_QUEUED){
         mpu_data = get_mpu_data();
         LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
-        run_pid_loop(&motor_thr, pid_vals, mpu_data, goal_gyro, goal_accel, thr);
+        run_pid_loops(&motor_thr, pid_container, mpu_data, goal_gyro, goal_accel, thr);
         LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         write_to_motors(0);
         //LOG_CTRL("post write vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);

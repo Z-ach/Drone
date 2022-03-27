@@ -11,14 +11,20 @@
 #include "logmgr.h"
 
 typedef struct config{
-    kPID_t pid_vals;
+    PIDContainer pid_container;
     double base_thr;
 } config_t;
 
 typedef enum cfg_t{
-    kP,
-    kI,
-    kD,
+    roll_kP,
+    roll_kI,
+    roll_kD,
+    pitch_kP,
+    pitch_kI,
+    pitch_kD,
+    yaw_kP,
+    yaw_kI,
+    yaw_kD,
     thr
 } cfg_t;
 
