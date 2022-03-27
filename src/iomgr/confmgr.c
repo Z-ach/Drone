@@ -2,11 +2,12 @@
 
 char default_conf[] = "~/.drone_conf";
 char file_path[64] = {0};
-config_t *config;
+config_t config;
 int conf_read_status = 0;
 
 void read_config(){
-    config = malloc(sizeof(*config));
+    //config = malloc(sizeof(*config));
+    //LOG_IO("Allocating memory for cfg: %d bytes\n", sizeof(*config));
     if(file_path[0] == '\0'){
         resolve_conf_path();
     }
@@ -18,17 +19,17 @@ void read_config(){
         FILE *fp = fopen(file_path, "r");
         while(fscanf(fp, "%s = %f", key_buf, &val) != EOF){
             if(strcmp(key_buf, "kP") == 0){
-                config->pid_vals.kP = val;
-                LOG_IO("kP set to %f\n", config->pid_vals.kP);
+                config.pid_vals.kP = val;
+                LOG_IO("kP set to %f\n", config.pid_vals.kP);
             }else if(strcmp(key_buf, "kI") == 0){
-                config->pid_vals.kI = val;
-                LOG_IO("kI set to %f\n", config->pid_vals.kI);
+                config.pid_vals.kI = val;
+                LOG_IO("kI set to %f\n", config.pid_vals.kI);
             }else if(strcmp(key_buf, "kD") == 0){
-                config->pid_vals.kD = val;
-                LOG_IO("kD set to %f\n", config->pid_vals.kD);
+                config.pid_vals.kD = val;
+                LOG_IO("kD set to %f\n", config.pid_vals.kD);
             }else if(strcmp(key_buf, "baseThr") == 0){
-                config->base_thr = val;
-                LOG_IO("Base thr set to %f\n", config->base_thr);
+                config.base_thr = val;
+                LOG_IO("Base thr set to %f\n", config.base_thr);
             }
         }
         fclose(fp);
@@ -36,10 +37,10 @@ void read_config(){
     }else{
         LOG_IO("No config file found, using defaults.\n");
         // Set defaults and write
-        config->pid_vals.kP = 0.1;
-        config->pid_vals.kI = 0.0;
-        config->pid_vals.kD = 0.01;
-        config->base_thr = 0.5;
+        config.pid_vals.kP = 0.1;
+        config.pid_vals.kI = 0.0;
+        config.pid_vals.kD = 0.01;
+        config.base_thr = 0.5;
         write_config(config);
     }
 }
@@ -52,10 +53,14 @@ void resolve_conf_path(){
 }
 
 config_t get_config(){
+    LOG_IO("Config requested by command.\n");
     if(!conf_read_status){
+        LOG_IO("Config not yet loaded, initializing config.\n");
         read_config();
     }
-    return *config;
+    LOG_IO("Config (thr) loaded, returning: %f\n", config.base_thr);
+    LOG_IO("Config loaded, returning: %f, %f, %f, %f\n", config.pid_vals.kP, config.pid_vals.kI, config.pid_vals.kD, config.base_thr);
+    return config;
 }
 
 void update_cfg_from_net(cfg_t type, double val){
@@ -63,19 +68,19 @@ void update_cfg_from_net(cfg_t type, double val){
     val /= 10000;
     switch(type){
         case kP:
-            config->pid_vals.kP = val;
+            config.pid_vals.kP = val;
             LOG_IO("Set kP to %f\n", val);
             break;
         case kI:
-            config->pid_vals.kI = val;
+            config.pid_vals.kI = val;
             LOG_IO("Set kI to %f\n", val);
             break;
         case kD:
-            config->pid_vals.kD = val;
+            config.pid_vals.kD = val;
             LOG_IO("Set kD to %f\n", val);
             break;
         case thr:
-            config->base_thr = val;
+            config.base_thr = val;
             LOG_IO("Set base thr to %f\n", val);
             break;
     }
@@ -91,22 +96,22 @@ int cfg_to_resp(char *resp_buf, int buf_size){
     resp_ptr += bytes_written;
 
     // Write values stored in cfg to buffer
-    bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,%3.4f,%3.4f,%3.4f", config->pid_vals.kP, config->pid_vals.kI, config->pid_vals.kD, config->base_thr );
+    bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,%3.4f,%3.4f,%3.4f", config.pid_vals.kP, config.pid_vals.kI, config.pid_vals.kD, config.base_thr );
     resp_ptr += bytes_written;
     return resp_ptr;
 }
 
 
-void write_config(config_t *new_config){
+void write_config(config_t new_config){
     if(file_path[0] == '\0'){
         resolve_conf_path();
     }
     FILE *fp = fopen(file_path, "w");
 
-    fprintf(fp, "kP = %f\n", new_config->pid_vals.kP);
-    fprintf(fp, "kI = %f\n", new_config->pid_vals.kI);
-    fprintf(fp, "kD = %f\n", new_config->pid_vals.kD);
-    fprintf(fp, "baseThr = %f\n", new_config->base_thr);
+    fprintf(fp, "kP = %f\n", new_config.pid_vals.kP);
+    fprintf(fp, "kI = %f\n", new_config.pid_vals.kI);
+    fprintf(fp, "kD = %f\n", new_config.pid_vals.kD);
+    fprintf(fp, "baseThr = %f\n", new_config.base_thr);
 
     LOG_IO("Successfully wrote new config file.\n");
 

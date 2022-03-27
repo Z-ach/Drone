@@ -91,6 +91,8 @@ void run_pid_loop(_Atomic(rc_vector_t) *motor_thr, kPID_t pid_v, rc_mpu_data_t m
     pitch_output = (pitch_pid.kP * gyro_err.d[pitch_ax]) + (pitch_pid.kI * sum_gyro_err.d[pitch_ax]) + (pitch_pid.kD * delta_gyro_err.d[pitch_ax]);
     yaw_output   = (yaw_pid.kP * gyro_err.d[yaw_ax]) + (yaw_pid.kI * sum_gyro_err.d[yaw_ax]) + (yaw_pid.kD * delta_gyro_err.d[yaw_ax]);
     */
+    LOG_CTRL("\t\t\t\t\t\troll_err: %3.2f pitch_err: %3.2f yaw_err: %3.2f\n", gyro_err.d[roll_ax], gyro_err.d[pitch_ax], gyro_err.d[yaw_ax]);
+    LOG_CTRL("\t\t\t\t\tp: %f i: %f d: %f \n", pid_v.kP, pid_v.kI, pid_v.kD );
     LOG_CTRL("\t\t\t\t\t\troll: %3.2f pitch: %3.2f yaw: %3.2f alt: %3.2f\n", roll_output, pitch_output, yaw_output, thr);
 
     // left/right side: roll components same sign

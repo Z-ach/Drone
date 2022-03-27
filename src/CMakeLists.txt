@@ -8,7 +8,7 @@ project (Drone)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
-set(CMAKE_C_FLAGS -pthread)
+set(CMAKE_C_FLAGS "-pthread -ggdb")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
 # The following folder will be included

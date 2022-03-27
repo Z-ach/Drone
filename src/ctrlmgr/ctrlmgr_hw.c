@@ -31,6 +31,9 @@ void init_hardware(){
     int min_us = RC_ESC_DEFAULT_MIN_US;
     int max_us = RC_ESC_DEFAULT_MAX_US;
 
+    // get config values
+    config = get_config();
+
     // ignore warning about pointer types
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wincompatible-pointer-types"
@@ -125,6 +128,7 @@ int telem_to_resp(char *resp_buf, int buf_size){
 }
 
 void hover(_Atomic(CommandInfo) *cmd_info){
+    config = get_config();
     rc_mpu_data_t mpu_data = get_mpu_data();
     double est_alt = get_est_alt();
     rc_vector_zeros(&goal_gyro, 3);
@@ -141,17 +145,12 @@ void hover(_Atomic(CommandInfo) *cmd_info){
     kPID_t pid_vals = config.pid_vals;
     // account for g
     goal_accel.d[2] = -9.8;
-    int loop_counter = 0;
-    int idx_tester = M_BL;
-    int change_on = LOOP_HZ * 4;
     set_global_throttle(0.05);
-    motor_thr.d[idx_tester] = 0.16;
-    LOG_CTRL("set motor %d to 0.16\n", idx_tester);
     while(*cmd_info == NO_COMMANDS_QUEUED){
         mpu_data = get_mpu_data();
-        //LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
+        LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         run_pid_loop(&motor_thr, pid_vals, mpu_data, goal_gyro, goal_accel, thr);
-        //LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
+        LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         write_to_motors(0);
         //LOG_CTRL("post write vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         rc_usleep(1000000/LOOP_HZ);

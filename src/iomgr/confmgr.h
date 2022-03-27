@@ -26,7 +26,7 @@ void read_config();
 config_t get_config();
 void resolve_conf_path();
 void update_cfg_from_net(cfg_t type, double val);
-void write_config(config_t *new_config);
+void write_config(config_t new_config);
 int cfg_to_resp(char *resp_buf, int buf_size);
 
 #endif
