@@ -158,7 +158,7 @@ void hover(_Atomic(CommandInfo) *cmd_info){
     while(*cmd_info == NO_COMMANDS_QUEUED){
         mpu_data = get_mpu_data();
         LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
-        run_pid_loops(&motor_thr, pid_container, mpu_data, goal_gyro, goal_accel, thr);
+        run_pid_loops(&motor_thr, pid_container, mpu_data, goal_gyro, thr);
         LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         write_to_motors(0);
         //LOG_CTRL("post write vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
