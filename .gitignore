@@ -1,5 +1,6 @@
 # Exclude .vscode settings
 .vscode/
+*.swp
 
 # Exclude compiled binaries
 bin/
