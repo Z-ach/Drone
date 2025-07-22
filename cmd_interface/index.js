@@ -19,9 +19,15 @@ var table_esc_fl = document.getElementById("m_fl")
 var table_esc_fr = document.getElementById("m_fr")
 var table_bat = document.getElementById("battery")
 
-var cfg_kP_elem = document.getElementById("kP")
-var cfg_kI_elem = document.getElementById("kI")
-var cfg_kD_elem = document.getElementById("kD")
+var cfg_kP_roll_elem = document.getElementById("kP_roll")
+var cfg_kI_roll_elem = document.getElementById("kI_roll")
+var cfg_kD_roll_elem = document.getElementById("kD_roll")
+var cfg_kP_pitch_elem = document.getElementById("kP_pitch")
+var cfg_kI_pitch_elem = document.getElementById("kI_pitch")
+var cfg_kD_pitch_elem = document.getElementById("kD_pitch")
+var cfg_kP_yaw_elem = document.getElementById("kP_yaw")
+var cfg_kI_yaw_elem = document.getElementById("kI_yaw")
+var cfg_kD_yaw_elem = document.getElementById("kD_yaw")
 var cfg_thr_elem = document.getElementById("thr")
 
 //const SAMPLE_RATE = 500;
@@ -175,16 +181,32 @@ function read_config(val){
 }
 
 function update_cfg_table(){
-    cfg_kP_elem.value = cfg_vals.kP;
-    cfg_kI_elem.value = cfg_vals.kI;
-    cfg_kD_elem.value = cfg_vals.kD;
     cfg_thr_elem.value = cfg_vals.thr;
+    cfg_kP_roll_elem.value = cfg_vals.kP_roll;
+    cfg_kI_roll_elem.value = cfg_vals.kI_roll;
+    cfg_kD_roll_elem.value = cfg_vals.kD_roll;
+    cfg_kP_pitch_elem.value = cfg_vals.kP_pitch;
+    cfg_kI_pitch_elem.value = cfg_vals.kI_pitch;
+    cfg_kD_pitch_elem.value = cfg_vals.kD_pitch;
+    cfg_kP_yaw_elem.value = cfg_vals.kP_yaw;
+    cfg_kI_yaw_elem.value = cfg_vals.kI_yaw;
+    cfg_kD_yaw_elem.value = cfg_vals.kD_yaw;
 }
 
 function update_conf(){
     let base = "http://127.0.0.1:3000/cfg_update?"
 
-    let update_items = [ cfg_kP_elem, cfg_kI_elem, cfg_kD_elem, cfg_thr_elem ];
+    let update_items = [
+      cfg_kP_roll_elem.value,
+      cfg_kI_roll_elem.value,
+      cfg_kD_roll_elem.value,
+      cfg_kP_pitch_elem.value,
+      cfg_kI_pitch_elem.value,
+      cfg_kD_pitch_elem.value,
+      cfg_kP_yaw_elem.value,
+      cfg_kI_yaw_elem.value,
+      cfg_kD_yaw_elem.value,
+    ];
     for(let i = 0; i < update_items.length; i++){
         let elem = update_items[i];
         base = base.concat(`${elem.id}=${elem.value}`);
