@@ -8,6 +8,7 @@
 #include <signal.h>
 #include <stdatomic.h>
 
+#include "ctrlmgr_bat.h"
 #include "ctrlmgr_hw_build.h"
 #include "ctrlmgr_pid.h"
 #include "ctrlmgr_msr.h"

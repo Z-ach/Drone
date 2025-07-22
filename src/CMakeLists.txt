@@ -30,6 +30,8 @@ add_executable(Drone
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_loop.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_stat.h
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_state.h
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_bat.c
+		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_bat.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_cmd.c
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_cmd.h
 		${PROJECT_SOURCE_DIR}/cmdmgr/cmdmgr_handler.c

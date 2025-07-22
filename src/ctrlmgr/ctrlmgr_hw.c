@@ -54,6 +54,9 @@ void init_hardware(){
     init_msr_system();
     LOG_CTRL("Hardware init success.\n");
     goal_gyro.d[2] = get_mpu_data().fused_TaitBryan[2] * RAD_TO_DEG;
+
+    // init battery system
+    init_bat();
 }
 
 int esc_wakeup(){
@@ -87,6 +90,8 @@ int telem_to_resp(char *resp_buf, int buf_size){
     int bytes_written;
     rc_mpu_data_t mpu_data = get_mpu_data();
     double alt_est = get_est_alt();
+    double bat_volt = 0;
+    get_bat(&bat_volt);
     memset(resp_buf, 0, buf_size);
     bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "tlm:");
     resp_ptr += bytes_written;
@@ -124,6 +129,10 @@ int telem_to_resp(char *resp_buf, int buf_size){
         bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", motor_thr.d[i]);
         resp_ptr += bytes_written;
     }
+
+    // Record battery info
+    bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", bat_volt);
+    resp_ptr += bytes_written;
     return resp_ptr;
 }
 
