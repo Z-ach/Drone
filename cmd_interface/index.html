@@ -1,0 +1,167 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="styles.css">
+    <style>
+      #battery-container {
+        width: 300px;
+        height: 25px;
+        border: 2px solid #333;
+        background-color: #222;
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      #battery-bar {
+        height: 100%;
+        width: 0%;
+        background: green;
+        transition: width 0.2s, background-color 0.2s;
+      }
+    </style>
+    </head>
+    <body>
+        <button onclick="connect_to_server()" type="button">Connect to server</button>
+        <button onclick="send_cmd('hover')" type="button">Hover</button>
+        <button onclick="send_cmd('idle')" type="button">Idle</button>
+        <button onclick="send_cmd('land')" type="button">Land</button>
+
+        <br></br>
+
+        <table>
+            <tr>
+                <th colspan="4">Config</th>
+            </tr>
+            <tr>
+                <th>kP</th>
+                <th>kI</th>
+                <th>kD</th>
+                <th>thr</th>
+            </tr>
+            <tr>
+                <td><input type="text" id='kP' value="N/A"></td>
+                <td><input type="text" id='kI' value="N/A"></td>
+                <td><input type="text" id='kD' value="N/A"></td>
+                <td><input type="text" id='thr' value="N/A"></td>
+            </tr>
+            <tr>
+                <td colspan="4"><button onclick="update_conf()">Update Config</button></td>
+            </tr>
+
+        </table>
+
+        <p id="connection_field">Not connected.</p>
+
+        <table>
+            <tr>
+                <td>
+                    <table>
+                        <tr>
+                            <th colspan="3">Attitude (deg)</th>
+                        </tr>
+                        <tr>
+                            <th>Roll</th>
+                            <th>Pitch</th>
+                            <th>Yaw</th>
+                        </tr>
+                        <tr>
+                            <td><p id="roll">0</p></td>
+                            <td><p id="pitch">0</p></td>
+                            <td><p id="yaw">0</p></td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <th colspan="3">Acceleration (m/s^2)</th>
+                        </tr>
+                        <tr>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>Z</th>
+                        </tr>
+                        <tr>
+                            <td><p id="accel.x">0</p></td>
+                            <td><p id="accel.y">0</p></td>
+                            <td><p id="accel.z">0</p></td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <th colspan="3">Gyro (deg/s)</th>
+                        </tr>
+                        <tr>
+                            <th>X</th>
+                            <th>Y</th>
+                            <th>Z</th>
+                        </tr>
+                        <tr>
+                            <td><p id="gyro.x">0</p></td>
+                            <td><p id="gyro.y">0</p></td>
+                            <td><p id="gyro.z">0</p></td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <th>Altitude (m)</th>
+                        </tr>
+                        <tr>
+                            <td><p id="altitude">0</p></td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <th colspan="4">Speed Controllers</th>
+                        </tr>
+                        <tr>
+                            <th>BL</th>
+                            <th>BR</th>
+                            <th>FL</th>
+                            <th>FR</th>
+                        </tr>
+                        <tr>
+                            <td><p id="m_bl">0</p></td>
+                            <td><p id="m_br">0</p></td>
+                            <td><p id="m_fl">0</p></td>
+                            <td><p id="m_fr">0</p></td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table>
+                        <tr>
+                            <th>Battery (V)</th>
+                        </tr>
+                        <tr>
+                            <td><p id="battery">0</p></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <h3>Battery</h3>
+        <div id="battery-container">
+          <div id="battery-bar"></div>
+        </div>
+        <div id="att_chart"> </div>
+        <div id="accel_chart"> </div>
+        <div id="gyro_chart"> </div>
+        <div hidden id="alt_chart"> </div>
+        <div id="esc_chart"> </div>
+
+
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="index.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+        <script src="visuals.js"></script>
+    </body>
+</html>
