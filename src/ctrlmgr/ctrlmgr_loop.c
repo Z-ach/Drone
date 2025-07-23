@@ -9,7 +9,7 @@ void ctrl_loop_run(SharedStatus *status){
     while(running){
         stat = dispatch_cmd(status);
         pthread_mutex_lock(status->lock);
-		if(status->state->run_status != RUNNING){
+        if(status->state->run_status != RUNNING){
             running = 0;
         }
         pthread_mutex_unlock(status->lock);

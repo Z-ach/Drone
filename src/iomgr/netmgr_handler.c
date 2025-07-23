@@ -29,7 +29,7 @@ void *net_handler(void *shared_status){
     int expected_read = 8;
     char ack_message[] = "Acknowledged.";
     char client_message[RECV_BUF_SIZE] = {0};
-	char resp_buf[RESP_BUF_SIZE] = {0};
+    char resp_buf[RESP_BUF_SIZE] = {0};
     server_t server_socket, client_socket;
     struct sockaddr_in server, client;
     struct timeval tv;
@@ -57,7 +57,7 @@ void *net_handler(void *shared_status){
     }
     listen(server_socket.listen_fd, 3);
 
-	c = sizeof(struct sockaddr_in);
+    c = sizeof(struct sockaddr_in);
     client_socket.listen_fd = accept(server_socket.listen_fd, (struct sockaddr *)&client, (socklen_t*)&c);
     setsockopt(client_socket.listen_fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof tv);
     LOG_IO("Connection accepted.\n");
@@ -79,7 +79,7 @@ void *net_handler(void *shared_status){
             client_message[read_size] = '\0';
             LOG_IO("recv: %s (%d bytes)\n", client_message, read_size);
             pthread_mutex_lock(status->lock);
-			sig_req = dispatch_recv_msg(client_message, resp_buf);
+            sig_req = dispatch_recv_msg(client_message, resp_buf);
             if(sig_req){
                 LOG_IO("Tripping buffer, sig_req was %d.\n", sig_req);
                 pthread_cond_signal(status->buffer_cond);
@@ -115,8 +115,8 @@ void *net_handler(void *shared_status){
 }
 
 void msg_to_uint32(char *msg, uint32_t *cmd){
-	sscanf(msg, "%08X", cmd);
-	LOG_IO("cvt msg %s to val: 0x%08X\n", msg, *cmd);
+    sscanf(msg, "%08X", cmd);
+    LOG_IO("cvt msg %s to val: 0x%08X\n", msg, *cmd);
 }
 
 int check_mask(uint32_t cmd, uint32_t mask, int shift){
@@ -135,53 +135,53 @@ int dispatch_recv_msg(char *client_message, char *resp){
     int signal_req = 0;
     int write_len = 0;
     uint32_t cmd;
-	msg_to_uint32(client_message, &cmd);
+    msg_to_uint32(client_message, &cmd);
 
     if(check_mask(cmd, NET_TELEM_MASK, 16)){
         LOG_IO("Request for telemetry received.\n");
-		write_len = telem_to_resp(resp, RESP_BUF_SIZE);
-	}else if(check_mask(cmd, NET_SET_YAW_KD_MASK, 16)){
+        write_len = telem_to_resp(resp, RESP_BUF_SIZE);
+    }else if(check_mask(cmd, NET_SET_YAW_KD_MASK, 16)){
         LOG_IO("Request for kD update received.\n");
         update_cfg_from_net(yaw_kD, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_YAW_KI_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_YAW_KI_MASK, 16)){
         LOG_IO("Request for kI update received.\n");
         update_cfg_from_net(yaw_kI, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_YAW_KP_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_YAW_KP_MASK, 16)){
         LOG_IO("Request for kP update received.\n");
         update_cfg_from_net(yaw_kP, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_PITCH_KD_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_PITCH_KD_MASK, 16)){
         LOG_IO("Request for kD update received.\n");
         update_cfg_from_net(pitch_kD, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_PITCH_KI_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_PITCH_KI_MASK, 16)){
         LOG_IO("Request for kI update received.\n");
         update_cfg_from_net(pitch_kI, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_PITCH_KP_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_PITCH_KP_MASK, 16)){
         LOG_IO("Request for kP update received.\n");
         update_cfg_from_net(pitch_kP, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_ROLL_KD_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_ROLL_KD_MASK, 16)){
         LOG_IO("Request for kD update received.\n");
         update_cfg_from_net(roll_kD, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_ROLL_KI_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_ROLL_KI_MASK, 16)){
         LOG_IO("Request for kI update received.\n");
         update_cfg_from_net(roll_kI, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_SET_ROLL_KP_MASK, 16)){
+    }else if(check_mask(cmd, NET_SET_ROLL_KP_MASK, 16)){
         LOG_IO("Request for kP update received.\n");
         update_cfg_from_net(roll_kP, determine_cfg_req(cmd));
-	}else if(check_mask(cmd, NET_READ_CFG_MASK, 16)){
+    }else if(check_mask(cmd, NET_READ_CFG_MASK, 16)){
         LOG_IO("Request for config received.\n");
-		write_len = cfg_to_resp(resp, RESP_BUF_SIZE);
-	}else if(check_mask(cmd, NET_SET_THR_MASK, 16)){
+        write_len = cfg_to_resp(resp, RESP_BUF_SIZE);
+    }else if(check_mask(cmd, NET_SET_THR_MASK, 16)){
         LOG_IO("Request for thr update received.\n");
         update_cfg_from_net(thr, determine_cfg_req(cmd));
     }else{
         LOG_IO("Command received.\n");
-		stat = handoff_recv_cmd(cmd);
+        stat = handoff_recv_cmd(cmd);
         memset(resp, 0, RESP_BUF_SIZE);
         write_len = snprintf(resp, RESP_BUF_SIZE, "cmd:Command acknowledged.");
         if(stat == STATUS_OK){
             signal_req = 1;
         }
-	}
+    }
     if(write_len > 0){
         // add delimiter for easy processing
         resp[write_len] = ';';
