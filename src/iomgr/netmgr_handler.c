@@ -77,7 +77,7 @@ void *net_handler(void *shared_status){
 
         if(read_size <= 10 && read_size > 0){
             client_message[read_size] = '\0';
-            LOG_IO("recv: %s (%d bytes)\n", client_message, read_size);
+            //LOG_IO("recv: %s (%d bytes)\n", client_message, read_size);
             pthread_mutex_lock(status->lock);
             sig_req = dispatch_recv_msg(client_message, resp_buf);
             if(sig_req){
@@ -116,7 +116,7 @@ void *net_handler(void *shared_status){
 
 void msg_to_uint32(char *msg, uint32_t *cmd){
     sscanf(msg, "%08X", cmd);
-    LOG_IO("cvt msg %s to val: 0x%08X\n", msg, *cmd);
+    LOG_IO_L(LOG_DBG, "cvt msg %s to val: 0x%08X\n", msg, *cmd);
 }
 
 int check_mask(uint32_t cmd, uint32_t mask, int shift){
@@ -134,44 +134,52 @@ int dispatch_recv_msg(char *client_message, char *resp){
     OperationStatus stat;
     int signal_req = 0;
     int write_len = 0;
+    int dbg_level = 0;
     uint32_t cmd;
+    static uint32_t last_cmd = 0;
     msg_to_uint32(client_message, &cmd);
 
+    // If we are repeating the same command, don't output
+    if(cmd == last_cmd){
+        dbg_level = LOG_DBG;
+    }
+    last_cmd = cmd;
+
     if(check_mask(cmd, NET_TELEM_MASK, 16)){
-        LOG_IO("Request for telemetry received.\n");
+        LOG_IO_L(dbg_level,"Request for telemetry received.\n");
         write_len = telem_to_resp(resp, RESP_BUF_SIZE);
     }else if(check_mask(cmd, NET_SET_YAW_KD_MASK, 16)){
-        LOG_IO("Request for kD update received.\n");
+        LOG_IO_L(dbg_level,"Request for kD update received.\n");
         update_cfg_from_net(yaw_kD, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_YAW_KI_MASK, 16)){
-        LOG_IO("Request for kI update received.\n");
+        LOG_IO_L(dbg_level,"Request for kI update received.\n");
         update_cfg_from_net(yaw_kI, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_YAW_KP_MASK, 16)){
-        LOG_IO("Request for kP update received.\n");
+        LOG_IO_L(dbg_level,"Request for kP update received.\n");
         update_cfg_from_net(yaw_kP, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_PITCH_KD_MASK, 16)){
-        LOG_IO("Request for kD update received.\n");
+        LOG_IO_L(dbg_level,"Request for kD update received.\n");
         update_cfg_from_net(pitch_kD, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_PITCH_KI_MASK, 16)){
-        LOG_IO("Request for kI update received.\n");
+        LOG_IO_L(dbg_level,"Request for kI update received.\n");
         update_cfg_from_net(pitch_kI, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_PITCH_KP_MASK, 16)){
-        LOG_IO("Request for kP update received.\n");
+        LOG_IO_L(dbg_level,"Request for kP update received.\n");
         update_cfg_from_net(pitch_kP, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_ROLL_KD_MASK, 16)){
-        LOG_IO("Request for kD update received.\n");
+        LOG_IO_L(dbg_level,"Request for kD update received.\n");
         update_cfg_from_net(roll_kD, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_ROLL_KI_MASK, 16)){
-        LOG_IO("Request for kI update received.\n");
+        LOG_IO_L(dbg_level,"Request for kI update received.\n");
         update_cfg_from_net(roll_kI, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_SET_ROLL_KP_MASK, 16)){
-        LOG_IO("Request for kP update received.\n");
+        LOG_IO_L(dbg_level,"Request for kP update received.\n");
         update_cfg_from_net(roll_kP, determine_cfg_req(cmd));
     }else if(check_mask(cmd, NET_READ_CFG_MASK, 16)){
-        LOG_IO("Request for config received.\n");
+        LOG_IO_L(dbg_level,"Request for config received.\n");
         write_len = cfg_to_resp(resp, RESP_BUF_SIZE);
     }else if(check_mask(cmd, NET_SET_THR_MASK, 16)){
-        LOG_IO("Request for thr update received.\n");
+        LOG_IO_L(dbg_level,"Request for thr update received.\n");
         update_cfg_from_net(thr, determine_cfg_req(cmd));
     }else{
         LOG_IO("Command received.\n");
