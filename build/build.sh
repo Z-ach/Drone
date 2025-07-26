@@ -25,4 +25,5 @@ $DOCKCROSS make -C$BUILD
 if [ "$1" == "-d" ]; then
     # If deploy flag was set, rsync compiled binary to drone
     rsync bin/Drone bbb:~/Drone/bin/
+    rsync build/fusion/*so* bbb:~/Drone/bin/
 fi

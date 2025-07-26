@@ -11,9 +11,10 @@ rc_vector_t last_att_err = RC_VECTOR_INITIALIZER;
 rc_vector_t sum_att_err = RC_VECTOR_INITIALIZER;
 double alt_err, delta_alt_err, last_alt_err, sum_alt_err;
 int initialized = 0;
-uint64_t last_time, dt;
-uint64_t timeout = 1000000000;
-double est_dt = 1/LOOP_HZ;
+uint64_t last_time;
+double dt;
+double timeout = 1.0;
+double est_dt = 1.0/LOOP_HZ;
 double roll_output, pitch_output, yaw_output, alt_output;
 
 // Helpful for printing debug values
@@ -32,20 +33,23 @@ void init_pid_vals(){
     last_time = rc_nanos_since_epoch();
 }
 
-void update_errors(rc_mpu_data_t mpu_data, rc_vector_t goal_att){
+void update_errors(FusionEuler est_attitude, FusionEuler targ_attitude){
     if(!initialized){
         init_pid_vals();
     }else{
-        dt = rc_nanos_since_epoch() - last_time;
+        dt = (rc_nanos_since_epoch() - last_time) / 1000000000.0;
+        LOG_CTRL("rc_nanos_since_epoch: %" PRId64 "\n", rc_nanos_since_epoch());
+        LOG_CTRL("dt since last loop: %f\n", dt);
         if(dt > timeout){
             dt = est_dt;
         }
     }
+    last_time = rc_nanos_since_epoch();
     // calculate errors
     //alt_err = goal_alt - est_alt;
     //sum_alt_err += alt_err * dt;
     for(int i = 0; i < 3; i++){
-        att_err.d[i] = (mpu_data.fused_TaitBryan[i]*RAD_TO_DEG) - goal_att.d[i];
+        att_err.d[i] = est_attitude.array[i] - targ_attitude.array[i];
         if(i == 2){
             // Ignore yaw error when less than 5 deg in either direction
             if(att_err.d[i] < 5 && att_err.d[i] > -5){
@@ -72,8 +76,9 @@ void update_errors(rc_mpu_data_t mpu_data, rc_vector_t goal_att){
     }
 }
 
-void run_pid_loops(_Atomic(rc_vector_t) *motor_thr, PIDContainer pid_container, rc_mpu_data_t mpu_data, rc_vector_t goal_att, double thr){
-    update_errors(mpu_data, goal_att);
+void run_pid_loops(_Atomic(rc_vector_t) *motor_thr, PIDContainer pid_container,
+                   FusionEuler est_attitude, FusionEuler targ_attitude, double thr){
+    update_errors(est_attitude, targ_attitude);
     double roll_output = single_axis_pid(pid_container.roll, roll_ax);
     double pitch_output = single_axis_pid(pid_container.pitch, pitch_ax);
     double yaw_output = single_axis_pid(pid_container.yaw, yaw_ax);

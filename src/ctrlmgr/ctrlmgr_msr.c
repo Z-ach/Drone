@@ -18,11 +18,17 @@ static rc_kalman_t kf = RC_KALMAN_INITIALIZER;
 static rc_vector_t u = RC_VECTOR_INITIALIZER;
 static rc_vector_t y = RC_VECTOR_INITIALIZER;
 static rc_filter_t acc_lp = RC_FILTER_INITIALIZER;
+double sample_counter;
 
 // Getter functions for retrieving data
 rc_mpu_data_t get_mpu_data(){
     return mpu_data;
 }
+
+FusionEuler get_attitude(){
+    return FusionQuaternionToEuler(FusionAhrsGetQuaternion(&ahrs));
+}
+    
 
 double get_est_alt(){
     // 0th deg kalman filter predict for altitude (meters)
@@ -37,12 +43,23 @@ double get_est_alt(){
 static void __dmp_handler(void){
     int i;
     double accel_vec[3];
+    FusionVector f_accel_vec;
+    FusionVector f_gyro_vec;
     static int bmp_sample_counter = 0;
 
-    // Make copy of acceleration reading before rotating
+    // Make copy of data before rotating
     for(int i = 0; i < 3; i++){
         accel_vec[i] = mpu_data.accel[i];
+        f_accel_vec.array[i] = mpu_data.accel[i] * MS2_TO_G;
+        f_gyro_vec.array[i] = mpu_data.gyro[i];
     }
+
+    // Update via AHRS
+    FusionAhrsUpdateNoMagnetometer(&ahrs, f_gyro_vec, f_accel_vec, DT);
+    FusionEuler att = get_attitude();
+    LOG_CTRL_L(LOG_DBG, "Roll: %3.2f\n", att.angle.roll);
+    LOG_CTRL_L(LOG_DBG, "Pitch: %3.2f\n", att.angle.pitch);
+    LOG_CTRL_L(LOG_DBG, "Yaw: %3.2f\n", att.angle.yaw);
 
     // Rotate accel vector
     rc_quaternion_rotate_vector_array(accel_vec,mpu_data.dmp_quat);
@@ -50,12 +67,12 @@ static void __dmp_handler(void){
     // Do first-run filter setup
     if(kf.step == 0){
         kf.x_est.d[0] = bmp_data.alt_m;
-        rc_filter_prefill_inputs(&acc_lp, accel_vec[2] - 9.80665);
-        rc_filter_prefill_outputs(&acc_lp, accel_vec[2] - 9.80665);
+        rc_filter_prefill_inputs(&acc_lp, accel_vec[2] - G_TO_MS2);
+        rc_filter_prefill_outputs(&acc_lp, accel_vec[2] - G_TO_MS2);
     }
 
     // Calculate acceleration and smooth it just a tad
-    rc_filter_march(&acc_lp, accel_vec[2]-9.80665);
+    rc_filter_march(&acc_lp, accel_vec[2]-G_TO_MS2);
     u.d[0] = acc_lp.newest_output;
 
     // Don't bother filtering Barometer, kalman will deal with that
@@ -78,6 +95,8 @@ static void __dmp_handler(void){
 }
 
 int init_msr_system(){
+    // AHRS init
+    FusionAhrsInitialise(&ahrs);
     // MPU config
     rc_mpu_config_t mpu_conf;
 
@@ -170,14 +189,6 @@ int init_msr_system(){
 
     LOG_CTRL("Measurement system successfully initialized.");
 
-    // print a header
-    printf("\r\n");
-    printf(" altitude |");
-    printf("  velocity |");
-    printf(" accel_bias |");
-    printf(" alt (bmp) |");
-    printf(" vert_accel |");
-    printf("\n");
     //initial_bias = kf.x_est.d[0];
     //now just wait, print_data will run
     while(running){

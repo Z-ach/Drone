@@ -96,17 +96,12 @@ int telem_to_resp(char *resp_buf, int buf_size){
     bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "tlm:");
     resp_ptr += bytes_written;
 
-    // Record fused TaitBryan angle data for roll & pitch
-    for(int i = 0; i < 2; i++){
-        bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", mpu_data.fused_TaitBryan[i]*RAD_TO_DEG);
+    // Record attitude
+    FusionEuler attitude = get_attitude();
+    for(int i = 0; i < 3; i++){
+        bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", attitude.array[i]);
         resp_ptr += bytes_written;
     }
-
-    // Account for yaw error
-    double yaw_err = (mpu_data.fused_TaitBryan[2] * RAD_TO_DEG) - goal_gyro.d[2];
-    bytes_written = snprintf(resp_buf+resp_ptr, buf_size-resp_ptr, "%3.4f,", yaw_err);
-    resp_ptr += bytes_written;
-
 
     // Record accel data
     for(int i = 0; i < 3; i++){
@@ -138,30 +133,19 @@ int telem_to_resp(char *resp_buf, int buf_size){
 
 void hover(_Atomic(CommandInfo) *cmd_info){
     config = get_config();
-    rc_mpu_data_t mpu_data = get_mpu_data();
+    FusionEuler est_attitude = get_attitude();
+    FusionEuler targ_attitude = { 0.0f, 0.0f, est_attitude.angle.pitch };
     double est_alt = get_est_alt();
-    rc_vector_zeros(&goal_gyro, 3);
-    rc_vector_zeros(&goal_accel, 3);
-    goal_gyro.d[2] = mpu_data.fused_TaitBryan[TB_YAW_Z]*RAD_TO_DEG;
     double thr = config.base_thr;
     double goal_alt = 2; // set goal altitude to 1 meter
-    /*
-    kPID_t pitch_pid = { 0.1, 0.0, 0.001 };
-    kPID_t roll_pid = { 0.1, 0.0, 0.001 };
-    kPID_t yaw_pid = { 0.1, 0.0, 0.001 };
-    */
-    //kPID_t pid_vals = { 0.2, 0.001, 0.01 };
     PIDContainer pid_container = config.pid_container;
-    // account for g
-    goal_accel.d[2] = -9.8;
     set_global_throttle(0.05);
     while(*cmd_info == NO_COMMANDS_QUEUED){
-        mpu_data = get_mpu_data();
+        est_attitude = get_attitude();
         LOG_CTRL("pre motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
-        run_pid_loops(&motor_thr, pid_container, mpu_data, goal_gyro, thr);
+        run_pid_loops(&motor_thr, pid_container, est_attitude, targ_attitude, thr);
         LOG_CTRL("post motor vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         write_to_motors(0);
-        //LOG_CTRL("post write vals: %3.2f,%3.2f,%3.2f,%3.2f\n", motor_thr.d[0], motor_thr.d[1], motor_thr.d[2], motor_thr.d[3]);
         rc_usleep(1000000/LOOP_HZ);
     }
 }
@@ -172,6 +156,7 @@ void idle(_Atomic(CommandInfo) *cmd_info){
     LOG_CTRL("Executing idle command.\n");
     while(*cmd_info == NO_COMMANDS_QUEUED || counter < min_timeout){
         set_global_throttle(0.05);
+        write_to_motors(0);
         rc_usleep(1000000/LOOP_HZ);
         if (counter < min_timeout){
             counter++;

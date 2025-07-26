@@ -1,9 +1,11 @@
 #ifndef CTRLMGR_PID_H
 #define CTRLMGR_PID_H
 
+#include <inttypes.h>
 #include <rc/mpu.h>
 #include <rc/time.h>
 #include <rc/math/vector.h>
+#include <fusion/Fusion.h>
 #include <iomgr/logmgr.h>
 #include "ctrlmgr_hw_build.h"
 
@@ -26,9 +28,9 @@ typedef enum PIDAxisType{
 } PIDAxisType;
 
 
-void update_errors(rc_mpu_data_t mpu_data, rc_vector_t goal_gyro);
+void update_errors(FusionEuler est_attitude, FusionEuler targ_attitude);
 void run_pid_loops(_Atomic(rc_vector_t) *motor_thr, PIDContainer pid_container,
-                   rc_mpu_data_t mpu_data, rc_vector_t goal_gyro, double thr);
+                   FusionEuler est_attitude, FusionEuler targ_attitude, double thr);
 double single_axis_pid(kPID_t pid_v, int axis);
 
 
