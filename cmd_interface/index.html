@@ -119,9 +119,46 @@
       margin: 10px;
       background: #111;
     }
+
+    #sidebar {
+      width: 300px;
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      overflow: hidden;
+      transition: width 0.3s;
+    }
+
+    #sidebar.collapsed {
+      width: 0;
+    }
+
+    #toggle-sidebar {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 50px;
+      z-index: 1000;
+    }
+
+    #config-content {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pid-table td, .pid-table th {
+      border: 1px solid black;
+      padding: 5px;
+    }
+
+    .pid-table {
+      border-collapse: collapse;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
+  <button id="toggle-sidebar" onclick="document.getElementById('sidebar').classList.toggle('collapsed')">⚙️</button>
   <aside>
     <h3>Commands</h3>
     <button onclick="connect_to_server()">Connect to server</button>
@@ -136,35 +173,41 @@
     </div>
   </aside>
 
+    <div id="sidebar" class="collapsed">
+      <div id="config-content">
+        <label for="thr">Throttle</label>
+        <input type="text" id="thr" value="N/A" />
+
+        <table class="pid-table">
+          <tr>
+            <th></th>
+            <th>Roll</th>
+            <th>Pitch</th>
+            <th>Yaw</th>
+          </tr>
+          <tr>
+            <th>P</th>
+            <td><input type="text" id="kP_roll" value="N/A"></td>
+            <td><input type="text" id="kP_pitch" value="N/A"></td>
+            <td><input type="text" id="kP_yaw" value="N/A"></td>
+          </tr>
+          <tr>
+            <th>I</th>
+            <td><input type="text" id="kI_roll" value="N/A"></td>
+            <td><input type="text" id="kI_pitch" value="N/A"></td>
+            <td><input type="text" id="kI_yaw" value="N/A"></td>
+          </tr>
+          <tr>
+            <th>D</th>
+            <td><input type="text" id="kD_roll" value="N/A"></td>
+            <td><input type="text" id="kD_pitch" value="N/A"></td>
+            <td><input type="text" id="kD_yaw" value="N/A"></td>
+          </tr>
+        </table>
+        <button onclick="update_conf()">Update Config</button>
+      </div>
+    </div>
   <main>
-    <h3>Configuration</h3>
-    <table>
-      <tr>
-        <th>thr</th>
-        <th>kP_roll</th>
-        <th>kI_roll</th>
-        <th>kD_roll</th>
-        <th>kP_pitch</th>
-        <th>kI_pitch</th>
-        <th>kD_pitch</th>
-        <th>kP_yaw</th>
-        <th>kI_yaw</th>
-        <th>kD_yaw</th>
-      </tr>
-      <tr>
-        <td><input type="text" id="thr"></td>
-        <td><input type="text" id="kP_roll"></td>
-        <td><input type="text" id="kI_roll"></td>
-        <td><input type="text" id="kD_roll"></td>
-        <td><input type="text" id="kP_pitch"></td>
-        <td><input type="text" id="kI_pitch"></td>
-        <td><input type="text" id="kD_pitch"></td>
-        <td><input type="text" id="kP_yaw"></td>
-        <td><input type="text" id="kI_yaw"></td>
-        <td><input type="text" id="kD_yaw"></td>
-      </tr>
-    </table>
-    <button onclick="update_conf()">Update Config</button>
 
     <p id="connection_field">Not connected.</p>
 
@@ -222,7 +265,7 @@
       <div id="att_chart"></div>
       <div id="accel_chart"></div>
       <div id="gyro_chart"></div>
-      <div id="alt_chart"></div>
+      <div hidden id="alt_chart"></div>
       <div id="esc_chart"></div>
     </div>
 
