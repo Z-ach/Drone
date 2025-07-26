@@ -10,6 +10,7 @@ build/Makefile
 build/CMakeCache.txt
 build/CMakeFiles/
 build/cmake_install.cmake
+build/fusion
 
 # Exclude build script - this should be created by resources script
 build/beagle_armv7

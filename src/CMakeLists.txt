@@ -14,7 +14,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 # The following folder will be included
 include_directories("${PROJECT_SOURCE_DIR}")
 
-list(APPEND EXTRA_LIBS librobotcontrol.so.1)
+add_subdirectory(${PROJECT_SOURCE_DIR}/fusion)
+list(APPEND EXTRA_LIBS librobotcontrol.so.1 fusion)
 
 add_executable(Drone
 		${PROJECT_SOURCE_DIR}/ctrlmgr/ctrlmgr_ctrl.c
