@@ -292,6 +292,7 @@ function connection_updater(val){
     updateBatteryBar(telem_vals.bat);
     format_table();
     update_chart();
+    updateEscGauges(telem_vals);
     connection_field.innerHTML = val;
 }
 
