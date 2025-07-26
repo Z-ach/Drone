@@ -3,9 +3,10 @@ const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(70, window.innerWidth/window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
 
-const renderer = new THREE.WebGLRenderer({antialias: true});
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const vizContainer = document.getElementById('attitude-viz');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(vizContainer.clientWidth, vizContainer.clientHeight);
+vizContainer.appendChild(renderer.domElement);
 
 // Create a drone cube
 const geometry = new THREE.BoxGeometry(1, 0.1, 1); // flat to resemble a quad

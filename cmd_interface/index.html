@@ -1,179 +1,236 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="styles.css">
-    <style>
-      #battery-container {
-        width: 300px;
-        height: 25px;
-        border: 2px solid #333;
-        background-color: #222;
-        border-radius: 6px;
-        overflow: hidden;
-        margin-bottom: 10px;
-      }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Drone Command Interface</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
 
-      #battery-bar {
-        height: 100%;
-        width: 0%;
-        background: green;
-        transition: width 0.2s, background-color 0.2s;
-      }
-    </style>
-    </head>
-    <body>
-        <button onclick="connect_to_server()" type="button">Connect to server</button>
-        <button onclick="send_cmd('hover')" type="button">Hover</button>
-        <button onclick="send_cmd('idle')" type="button">Idle</button>
-        <button onclick="send_cmd('land')" type="button">Land</button>
+    body {
+      background-color: #121212;
+      color: #E0E0E0;
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+    }
 
-        <br></br>
+    aside {
+      background: #1F1F1F;
+      padding: 20px;
+      width: 250px;
+      border-right: 1px solid #333;
+    }
 
-        <table>
-            <tr>
-                <th colspan="4">Config</th>
-            </tr>
-            <tr>
-                <th>thr</th>
-                <th>kP_roll</th>
-                <th>kI_roll</th>
-                <th>kD_roll</th>
-                <th>kP_pitch</th>
-                <th>kI_pitch</th>
-                <th>kD_pitch</th>
-                <th>kP_yaw</th>
-                <th>kI_yaw</th>
-                <th>kD_yaw</th>
-            </tr>
-            <tr>
-                <td><input type="text" id='thr' value="N/A"></td>
-                <td><input type="text" id='kP_roll' value="N/A"></td>
-                <td><input type="text" id='kI_roll' value="N/A"></td>
-                <td><input type="text" id='kD_roll' value="N/A"></td>
-                <td><input type="text" id='kP_pitch' value="N/A"></td>
-                <td><input type="text" id='kI_pitch' value="N/A"></td>
-                <td><input type="text" id='kD_pitch' value="N/A"></td>
-                <td><input type="text" id='kP_yaw' value="N/A"></td>
-                <td><input type="text" id='kI_yaw' value="N/A"></td>
-                <td><input type="text" id='kD_yaw' value="N/A"></td>
-            </tr>
-            <tr>
-                <td colspan="4"><button onclick="update_conf()">Update Config</button></td>
-            </tr>
+    main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
 
-        </table>
+    h3, h4 {
+      margin-bottom: 12px;
+    }
 
-        <p id="connection_field">Not connected.</p>
+    button {
+      background-color: #2979FF;
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      margin: 5px 0;
+      font-size: 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+    }
 
-        <table>
-            <tr>
-                <td>
-                    <table>
-                        <tr>
-                            <th colspan="3">Attitude (deg)</th>
-                        </tr>
-                        <tr>
-                            <th>Roll</th>
-                            <th>Pitch</th>
-                            <th>Yaw</th>
-                        </tr>
-                        <tr>
-                            <td><p id="roll">0</p></td>
-                            <td><p id="pitch">0</p></td>
-                            <td><p id="yaw">0</p></td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th colspan="3">Acceleration (m/s^2)</th>
-                        </tr>
-                        <tr>
-                            <th>X</th>
-                            <th>Y</th>
-                            <th>Z</th>
-                        </tr>
-                        <tr>
-                            <td><p id="accel.x">0</p></td>
-                            <td><p id="accel.y">0</p></td>
-                            <td><p id="accel.z">0</p></td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th colspan="3">Gyro (deg/s)</th>
-                        </tr>
-                        <tr>
-                            <th>X</th>
-                            <th>Y</th>
-                            <th>Z</th>
-                        </tr>
-                        <tr>
-                            <td><p id="gyro.x">0</p></td>
-                            <td><p id="gyro.y">0</p></td>
-                            <td><p id="gyro.z">0</p></td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th>Altitude (m)</th>
-                        </tr>
-                        <tr>
-                            <td><p id="altitude">0</p></td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th colspan="4">Speed Controllers</th>
-                        </tr>
-                        <tr>
-                            <th>BL</th>
-                            <th>BR</th>
-                            <th>FL</th>
-                            <th>FR</th>
-                        </tr>
-                        <tr>
-                            <td><p id="m_bl">0</p></td>
-                            <td><p id="m_br">0</p></td>
-                            <td><p id="m_fl">0</p></td>
-                            <td><p id="m_fr">0</p></td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table>
-                        <tr>
-                            <th>Battery (V)</th>
-                        </tr>
-                        <tr>
-                            <td><p id="battery">0</p></td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-        </table>
+    button:hover {
+      background-color: #1565C0;
+    }
 
-        <h3>Battery</h3>
-        <div id="battery-container">
-          <div id="battery-bar"></div>
-        </div>
-        <div id="att_chart"> </div>
-        <div id="accel_chart"> </div>
-        <div id="gyro_chart"> </div>
-        <div hidden id="alt_chart"> </div>
-        <div id="esc_chart"> </div>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 24px;
+    }
 
+    th, td {
+      border: 1px solid #444;
+      padding: 8px 12px;
+      text-align: center;
+    }
 
+    th {
+      background-color: #2C2C2C;
+    }
 
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript" src="index.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
-        <script src="visuals.js"></script>
-    </body>
+    input[type="text"] {
+      width: 60px;
+      background-color: #2A2A2A;
+      color: #E0E0E0;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 4px;
+    }
+
+    #battery-container {
+      width: 100%;
+      height: 25px;
+      border: 2px solid #555;
+      background-color: #222;
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    #battery-bar {
+      height: 100%;
+      width: 0%;
+      background: green;
+      transition: width 0.2s, background-color 0.2s;
+    }
+
+    #data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+    }
+
+    #connection_field {
+      margin: 16px 0;
+    }
+
+    #charts {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    #attitude-viz {
+      width: 300px;
+      height: 300px;
+      border: 1px solid #ccc;
+      margin: 10px;
+      background: #111;
+    }
+  </style>
+</head>
+<body>
+  <aside>
+    <h3>Commands</h3>
+    <button onclick="connect_to_server()">Connect to server</button>
+    <button onclick="send_cmd('hover')">Hover</button>
+    <button onclick="send_cmd('idle')">Idle</button>
+    <button onclick="send_cmd('land')">Land</button>
+
+    <h4>Battery</h4>
+    <div id="battery">0</div>
+    <div id="battery-container">
+      <div id="battery-bar"></div>
+    </div>
+  </aside>
+
+  <main>
+    <h3>Configuration</h3>
+    <table>
+      <tr>
+        <th>thr</th>
+        <th>kP_roll</th>
+        <th>kI_roll</th>
+        <th>kD_roll</th>
+        <th>kP_pitch</th>
+        <th>kI_pitch</th>
+        <th>kD_pitch</th>
+        <th>kP_yaw</th>
+        <th>kI_yaw</th>
+        <th>kD_yaw</th>
+      </tr>
+      <tr>
+        <td><input type="text" id="thr"></td>
+        <td><input type="text" id="kP_roll"></td>
+        <td><input type="text" id="kI_roll"></td>
+        <td><input type="text" id="kD_roll"></td>
+        <td><input type="text" id="kP_pitch"></td>
+        <td><input type="text" id="kI_pitch"></td>
+        <td><input type="text" id="kD_pitch"></td>
+        <td><input type="text" id="kP_yaw"></td>
+        <td><input type="text" id="kI_yaw"></td>
+        <td><input type="text" id="kD_yaw"></td>
+      </tr>
+    </table>
+    <button onclick="update_conf()">Update Config</button>
+
+    <p id="connection_field">Not connected.</p>
+
+    <div id="data-grid">
+      <table>
+        <tr><th colspan="3">Attitude (deg)</th></tr>
+        <tr><th>Roll</th><th>Pitch</th><th>Yaw</th></tr>
+        <tr>
+          <td><p id="roll">0</p></td>
+          <td><p id="pitch">0</p></td>
+          <td><p id="yaw">0</p></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr><th colspan="3">Acceleration (m/s^2)</th></tr>
+        <tr><th>X</th><th>Y</th><th>Z</th></tr>
+        <tr>
+          <td><p id="accel.x">0</p></td>
+          <td><p id="accel.y">0</p></td>
+          <td><p id="accel.z">0</p></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr><th colspan="3">Gyro (deg/s)</th></tr>
+        <tr><th>X</th><th>Y</th><th>Z</th></tr>
+        <tr>
+          <td><p id="gyro.x">0</p></td>
+          <td><p id="gyro.y">0</p></td>
+          <td><p id="gyro.z">0</p></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr><th>Altitude (m)</th></tr>
+        <tr><td><p id="altitude">0</p></td></tr>
+      </table>
+
+      <table>
+        <tr><th colspan="4">ESC Outputs</th></tr>
+        <tr><th>BL</th><th>BR</th><th>FL</th><th>FR</th></tr>
+        <tr>
+          <td><p id="m_bl">0</p></td>
+          <td><p id="m_br">0</p></td>
+          <td><p id="m_fl">0</p></td>
+          <td><p id="m_fr">0</p></td>
+        </tr>
+      </table>
+    </div>
+
+    <div id="attitude-viz"></div>
+
+    <div id="charts">
+      <div id="att_chart"></div>
+      <div id="accel_chart"></div>
+      <div id="gyro_chart"></div>
+      <div id="alt_chart"></div>
+      <div id="esc_chart"></div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.min.js"></script>
+    <script src="visuals.js"></script>
+  </main>
+</body>
 </html>
+
