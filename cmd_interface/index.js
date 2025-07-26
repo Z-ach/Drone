@@ -233,6 +233,9 @@ function test_update(val){
 
 function send_cmd(cmd){
     httpGetAsync("http://127.0.0.1:3000/".concat(cmd), null)
+    if(cmd == "land"){
+        telem_handler.stop();
+    }
 }
 
 function start_connection_poll(){
