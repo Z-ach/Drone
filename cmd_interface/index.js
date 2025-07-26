@@ -160,10 +160,16 @@ function read_config(val){
         console.log(`Received cfg str: ${val}`);
         let parsed_vals = val.split(',');
         let idx = 0;
-        cfg_vals.kP = parseFloat(parsed_vals[idx++]);
-        cfg_vals.kI = parseFloat(parsed_vals[idx++]);
-        cfg_vals.kD = parseFloat(parsed_vals[idx++]);
         cfg_vals.thr = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kP_roll = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kI_roll = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kD_roll = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kP_pitch = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kI_pitch = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kD_pitch = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kP_yaw = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kI_yaw = parseFloat(parsed_vals[idx++]);
+        cfg_vals.kD_yaw = parseFloat(parsed_vals[idx++]);
         update_cfg_table();
     }else{
         console.log(`Invalid format detected: ${typeof val} (${val})`);

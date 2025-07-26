@@ -27,8 +27,8 @@ void read_config(){
                 config.base_thr = val;
                 LOG_IO("Base thr set to %f\n", config.base_thr);
             }else{
-                cur_pid_ax = pid_arr[idx/3];
-                pid_comp = idx % 3;
+                cur_pid_ax = pid_arr[(idx-1)/3];
+                pid_comp = (idx-1) % 3;
                 
                 switch(pid_comp){
                     case 0:
@@ -45,6 +45,7 @@ void read_config(){
                         break;
                 }
             }
+            idx++;
         }
         pid_container.roll = roll_pid;
         pid_container.pitch = pitch_pid;
